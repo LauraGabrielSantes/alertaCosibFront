@@ -6,7 +6,7 @@
     "generators": {
       "api-client": {
         "generatorName": "typescript-angular",
-        "output": "src/generated/openapi",
+        "output": "src/api/generated/",
         "inputSpec": "Boton-Api.yaml"
       }
     }
