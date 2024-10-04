@@ -200,7 +200,7 @@ paths:
                   descripcion:
                     type: string
         "404":
-          description: Reporte no encontrado.
+    description: Reporte no encontrado.
   "/estadoAlerta/{idDispositivo}":
     get:
       summary: Estado de la Alerta
