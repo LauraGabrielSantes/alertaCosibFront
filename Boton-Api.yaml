@@ -1,0 +1,343 @@
+openapi: 3.1.0
+info:
+  title: Botón API
+  description: "API para el envío de alertas, mensajes, fotos, audios, videos, reportes, comunicación WebSocket, y gestión de conversaciones a través de un servicio de Telegram."
+  version: 1.0.0-oas3.1
+servers:
+  - url: /boton
+    description: API REST y WebSocket bajo el prefijo `/boton`
+paths:
+  /enviarAlerta:
+    post:
+      summary: Enviar una alerta
+      description: "Envía una alerta con el `idDispositivo` y la `localizacion`, otros campos son opcionales."
+      requestBody:
+        description: Datos de la solicitud
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - idDispositivo
+                - localizacion
+              properties:
+                idDispositivo:
+                  type: string
+                  description: El identificador único del dispositivo.
+                localizacion:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                    altitude:
+                      type: number
+                      nullable: true
+                    accuracy:
+                      type: number
+                      nullable: true
+                    altitudeAccuracy:
+                      type: number
+                      nullable: true
+                    heading:
+                      type: number
+                      nullable: true
+                    speed:
+                      type: number
+                      nullable: true
+                nombreCompleto:
+                  type: string
+                  description: El nombre completo de la persona (opcional).
+                matricula:
+                  type: string
+                  description: La matrícula del usuario (opcional).
+                numeroTelefono:
+                  type: string
+                  description: Número de teléfono (opcional).
+                correoElectronico:
+                  type: string
+                  description: Correo electrónico del usuario (opcional).
+      responses:
+        "200":
+          description: Respuesta exitosa con el token de autenticación.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  contenido:
+                    type: string
+        "401":
+          description: Token no válido.
+        "500":
+          description: Error interno del servidor.
+  /enviarMensaje:
+    post:
+      summary: Enviar un mensaje
+      description: Envía un mensaje de texto al servicio de Telegram.
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Mensaje a enviar
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contenido:
+                  type: string
+      responses:
+        "200":
+          description: Mensaje enviado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+        "401":
+          description: Token no válido.
+        "500":
+          description: Error inesperado.
+  /enviarFoto:
+    post:
+      summary: Enviar una foto
+      description: Envía una foto a través del servicio de Telegram.
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Foto en formato de bytes
+        required: true
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          image/png:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Foto enviada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+        "401":
+          description: Token no válido.
+        "500":
+          description: Error inesperado.
+  /checarComunicacion:
+    get:
+      summary: Verificar la comunicación
+      description: Endpoint para checar si hay comunicación con el servicio.
+      responses:
+        "200":
+          description: Comunicación exitosa.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contenido:
+                    type: string
+  /reportes/listar:
+    get:
+      summary: Listar todos los reportes
+      description: Devuelve una lista de todos los reportes.
+      responses:
+        "200":
+          description: Lista de reportes devuelta exitosamente.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    descripcion:
+                      type: string
+  "/reportes/obtener/{id}":
+    get:
+      summary: Obtener un reporte por ID
+      description: Devuelve un reporte específico basado en su ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reporte devuelto exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  descripcion:
+                    type: string
+        "404":
+          description: Reporte no encontrado.
+  "/estadoAlerta/{idDispositivo}":
+    get:
+      summary: Estado de la Alerta
+      tags: []
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Tipo:
+                    x-stoplight:
+                      id: qrjogfrmrbp7v
+                    enum:
+                      - ATENDIDA
+                      - PENDIENTE
+                      - RECHAZADA
+                      - OTRA
+              examples:
+                Example 1:
+                  value:
+                    tipo: Atendida
+      operationId: EstadoAtendida
+      x-stoplight:
+        id: 8mg6zeq51j6fq
+      parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: idDispositivo
+        in: path
+        required: true
+x-websocket:
+  /boton/ws:
+    description: WebSocket para enviar mensajes a "/topic/telegram" desde el prefijo `/boton`
+    subscribe:
+      summary: Conectarse al WebSocket para recibir mensajes de Telegram
+      description: Envía mensajes al WebSocket y los suscriptores recibirán mensajes a través del destino `/topic/telegram`.
+      message:
+        $ref: "#/components/schemas/Messages"
+    publish:
+      summary: Publicar mensajes en WebSocket
+      description: Publica mensajes que serán enviados a los suscriptores en el destino `/topic/telegram`.
+      message:
+        $ref: "#/components/schemas/Information"
+components:
+  schemas:
+    SolicitudAlerta:
+      type: object
+      required:
+        - idDispositivo
+        - localizacion
+      properties:
+        idDispositivo:
+          type: string
+          description: El identificador único del dispositivo.
+        localizacion:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+            altitude:
+              type: number
+              nullable: true
+            accuracy:
+              type: number
+              nullable: true
+            altitudeAccuracy:
+              type: number
+              nullable: true
+            heading:
+              type: number
+              nullable: true
+            speed:
+              type: number
+              nullable: true
+        nombreCompleto:
+          type: string
+          description: El nombre completo de la persona (opcional).
+        matricula:
+          type: string
+          description: La matrícula del usuario (opcional).
+        numeroTelefono:
+          type: string
+          description: Número de teléfono (opcional).
+        correoElectronico:
+          type: string
+          description: Correo electrónico del usuario (opcional).
+    Respuesta:
+      type: object
+      properties:
+        token:
+          type: string
+        contenido:
+          type: string
+    Solicitud:
+      type: object
+      properties:
+        contenido:
+          type: string
+    Mensaje:
+      type: object
+      properties:
+        contenido:
+          type: string
+    PostAlerta:
+      type: object
+      properties:
+        mensaje:
+          type: string
+    Reporte:
+      type: object
+      properties:
+        id:
+          type: string
+        descripcion:
+          type: string
+    Messages:
+      type: object
+      properties:
+        body:
+          type: string
+    Information:
+      type: object
+      properties:
+        body:
+          type: string
+    Conversacion:
+      type: object
+      properties:
+        idDispositivo:
+          type: string
+        mensajes:
+          type: array
+          items:
+            type: string

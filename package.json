@@ -9,11 +9,14 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "openapi:generate": "openapi-generator-cli generate --generator-key api-client"
   },
   "private": true,
   "dependencies": {
+    "http-proxy-middleware": "^3.0.0",
     "@angular/animations": "^18.0.0",
+    "@openapitools/openapi-generator-cli": "^2.13.4",
     "@angular/common": "^18.0.0",
     "@angular/compiler": "^18.0.0",
     "@angular/core": "^18.0.0",
