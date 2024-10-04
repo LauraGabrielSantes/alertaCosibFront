@@ -1,0 +1,7 @@
+{
+  "name": "AlertaCosibFront",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
