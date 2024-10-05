@@ -9,7 +9,7 @@ export class AppStateService {
   private readonly backgroundClassSource = new BehaviorSubject<string>(
     'background-default',
   );
-  private readonly isLoadingSource = new BehaviorSubject<boolean>(true);
+  private readonly isLoadingSource = new BehaviorSubject<boolean>(false);
 
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
