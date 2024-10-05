@@ -24,40 +24,43 @@ import { AppStateService } from 'src/app-state.service';
   ],
 })
 export class EmergenciaPage implements OnDestroy {
-  private intervalId: any;
+  private intervalId: any = null;
   private connectionStatus: boolean = false;
-
-  constructor(private readonly appStateService: AppStateService) {}
+  texto = 'no hay conexión';
+  constructor(private readonly appStateService: AppStateService) {
+    this.appStateService.changeBackgroundDanger();
+  }
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
-
-    if (!this.connectionStatus) {
-      this.appStateService.startLoading();
-    }
-
-    this.intervalId = setInterval(() => {
-      this.checkConnection();
-    }, 3000);
+    this.pintaPantalla();
+    this.intervalId = setInterval(async () => {
+      await this.checarConexion();
+      await this.pintaPantalla();
+    }, 1000);
   }
 
-  ionViewWillLeave() {
-    this.clearInterval();
-    this.appStateService.stopLoading();
-  }
-
-  ngOnDestroy() {
-    this.clearInterval();
-    this.appStateService.stopLoading();
-  }
-
-  private async checkConnection() {
-    if (await this.checarConexion()) {
-      this.appStateService.changeBackgroundGris();
+  private async pintaPantalla() {
+    if (this.connectionStatus) {
+      this.pintaHayConexion();
+      this.texto = 'hay conexión';
     } else {
-      this.appStateService.changeBackgroundDanger();
+      this.pintaNoHayConexion();
+      this.texto = 'no hay conexión';
     }
     this.appStateService.stopLoading();
+  }
+
+  private pintaHayConexion() {
+    this.appStateService.changeBackgroundGris();
+  }
+  private pintaNoHayConexion() {
+    this.appStateService.changeBackgroundDanger();
+  }
+
+  private async checarConexion(): Promise<boolean> {
+    this.connectionStatus = true;
+    return true;
   }
 
   private clearInterval() {
@@ -66,9 +69,13 @@ export class EmergenciaPage implements OnDestroy {
       this.intervalId = null;
     }
   }
+  ionViewWillLeave() {
+    this.clearInterval();
+    this.appStateService.stopLoading();
+  }
 
-  private async checarConexion(): Promise<boolean> {
-    this.connectionStatus = false;
-    return false; // Ejemplo de retorno
+  ngOnDestroy() {
+    this.clearInterval();
+    this.appStateService.stopLoading();
   }
 }
