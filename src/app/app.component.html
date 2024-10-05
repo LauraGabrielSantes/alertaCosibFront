@@ -6,13 +6,12 @@
           <img src="assets/logos/uam.svg" alt="UAM Logo" class="logo">
           <img src="assets/logos/cosib.svg" alt="Cosib Logo" class="logo">
           <img src="assets/logos/CosibNegro.svg" alt="Cosib Negro Logo" class="logo">
-
         </div>
         <ion-toolbar>
           <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>este es el titulo de la pagina</ion-title>
+          <ion-title>{{pageTitle}}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
@@ -21,12 +20,32 @@
     </ion-app>
   </ion-split-pane>
 </div>
-<ion-menu contentId="main-content">
+<ion-menu auto-hide="true" contentId="main-content">
   <ion-content class="principal-menu-contenido">
     <div class="cabecera-menu">
-      <img src="assets/icon/SVG/menu.svg" alt="Menu Icon" class="icono">
+      <ion-menu-toggle>
+        <img src="assets/icon/SVG/menu.svg" alt="Menu Icon" class="icono">
+      </ion-menu-toggle>
       <h1>Menú</h1>
-      <img src="assets/icon/SVG/menurARojo.svg  " alt="Logo Flotante Rojo" class="icono">
+      <img src="assets/icon/SVG/menurARojo.svg" alt="Logo Flotante Rojo" class="icono">
+    </div>
+    <div class="contenido-menu">
+      <ion-menu-toggle>
+        <div class="opciones">
+          <div class="opcion" (click)="navigateTo('emergencia')">
+            <img src="assets/icon/SVG/boton-emergencia-menu.svg" alt="boton" class="icono-menu">
+            <div class="text-opcion">Botón de emergencia</div>
+          </div>
+          <div class="opcion" (click)="navigateTo('servicios')">
+            <img src="assets/icon/SVG/servicios-boton-menu.svg" alt="Servicios" class="icono-menu">
+            <div class="text-opcion">Servicios COSIB</div>
+          </div>
+          <div class="opcion" (click)="navigateTo('configuracion')">
+            <img src="assets/icon/SVG/configuracion-boton-menu.svg" alt="Configuracion" class="icono-menu">
+            <div class="text-opcion">Configuración</div>
+          </div>
+        </div>
+      </ion-menu-toggle>
     </div>
   </ion-content>
 </ion-menu>

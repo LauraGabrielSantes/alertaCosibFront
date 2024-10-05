@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { MenuController } from '@ionic/angular';
 import {
   IonApp,
   IonButtons,
@@ -21,8 +22,6 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-//import { addIcons } from 'ionicons';
-//import { mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -54,7 +53,32 @@ import {
   ],
 })
 export class AppComponent {
-  constructor() {
-    // addIcons({ mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, heartOutline, heartSharp, archiveOutline, archiveSharp, trashOutline, trashSharp, warningOutline, warningSharp, bookmarkOutline, bookmarkSharp });
+  // Propiedad para almacenar el título
+  pageTitle: string = 'Emergencia'; // Título inicial
+
+  constructor(
+    private readonly router: Router,
+    private readonly menu: MenuController,
+  ) {}
+
+  // Método para navegar y cambiar el título
+  async navigateTo(page: string) {
+    // Cambia el título según la opción seleccionada
+    switch (page) {
+      case 'emergencia':
+        this.pageTitle = 'Emergencia';
+        break;
+      case 'servicios':
+        this.pageTitle = 'Servicios COSIB';
+        break;
+      case 'configuracion':
+        this.pageTitle = 'Configuración';
+        break;
+      default:
+        this.pageTitle = 'este es el titulo de la pagina'; // Título por defecto
+    }
+
+    await this.router.navigate([`/${page}`]);
+    await this.menu.close();
   }
 }

@@ -23,17 +23,20 @@ ion-menu::part(container) {
   //quito sombras
   box-shadow: none;
   --min-width: 85%;
-  --min-height: 40%;
+  --min-height: 60%;
   --max-height: 80%;
+  --color: #ebf0f2;
+  color: #ebf0f2;
 }
 .principal-menu-contenido {
   --background: linear-gradient(
       to bottom,
-      rgba(43, 45, 66, 1),
+      rgba(43, 45, 66, 1) 50%,
       rgba(43, 45, 66, 0)
     ),
-    var(--ion-color-secondary) no-repeat center calc(5rem) / 100%
-      url("../assets/texturas/png/Fondo-azul.png");
+    var(--ion-color-secondary) no-repeat center -200px / 120% url("../assets/texturas/png/Fondo-azul.png");
+  --color: #ebf0f2;
+  color: #ebf0f2;
 }
 
 .cabecera-logos {
@@ -58,16 +61,41 @@ ion-menu::part(container) {
 }
 
 .cabecera-menu .icono {
-  width: 5rem; /* Asegura que los iconos sean cuadrados */
+  height: 3rem; /* Asegura que los iconos sean cuadrados */
   margin: 1rem;
-  padding: 1rem;
+  padding: 0.4rem;
+  padding-left: 1rem;
+  margin-left: 0.5rem;
 }
 
 .cabecera-menu h1 {
   margin: 0; /* Elimina el margen por defecto del h1 */
   flex-grow: 1; /* Permite que el h1 ocupe el espacio disponible */
   text-align: left; /* Centra el texto horizontalmente */
-  font-size: 2rem;
+  font-size: 1.4 rem;
   margin-left: 1rem;
   font-weight: bold;
+}
+.contenido-menu {
+  margin: 1rem;
+  margin-top: 1rem;
+  .opciones {
+    //pointer
+    cursor: pointer;
+  }
+  .opcion {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--ion-color-primary);
+  }
+  .icono-menu {
+    height: 3rem;
+    margin-right: 1rem; /* Optional: Adds space between the icon and text */
+    padding: 0.5rem;
+  }
 }
