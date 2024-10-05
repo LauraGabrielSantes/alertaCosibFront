@@ -18,7 +18,7 @@
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
+@import "./assets/font-icons/css/font-embedded.css"; // Importamos el archivo de fuentes personalizadas
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
@@ -26,5 +26,5 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 * {
-  font-size: 12pt;
+  font-size: 11pt;
 }

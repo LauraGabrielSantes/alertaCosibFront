@@ -1,0 +1,86 @@
+@font-face {
+  font-family: 'font';
+  src: url('../font/font.eot?39929027');
+  src: url('../font/font.eot?39929027#iefix') format('embedded-opentype'),
+       url('../font/font.woff2?39929027') format('woff2'),
+       url('../font/font.woff?39929027') format('woff'),
+       url('../font/font.ttf?39929027') format('truetype'),
+       url('../font/font.svg?39929027#font') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'font';
+    src: url('../font/font.svg?39929027#font') format('svg');
+  }
+}
+*/
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "font";
+  font-style: normal;
+  font-weight: normal;
+  speak: never;
+
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+}
+
+.icon-menu-9:before { content: '\e800'; } /* '' */
+.icon-configuracion-boton-menu:before { content: '\e801'; } /* '' */
+.icon-servicios-boton-menu:before { content: '\e802'; } /* '' */
+.icon-boton-emergencia-menu:before { content: '\e803'; } /* '' */
+.icon-violencia-de-género:before { content: '\e804'; } /* '' */
+.icon-ubicación:before { content: '\e805'; } /* '' */
+.icon-servicios:before { content: '\e806'; } /* '' */
+.icon-seguridad:before { content: '\e807'; } /* '' */
+.icon-salud:before { content: '\e808'; } /* '' */
+.icon-otras:before { content: '\e809'; } /* '' */
+.icon-opción:before { content: '\e80a'; } /* '' */
+.icon-menurarojo:before { content: '\e80b'; } /* '' */
+.icon-menu:before { content: '\e80c'; } /* '' */
+.icon-más-información:before { content: '\e80d'; } /* '' */
+.icon-llamada:before { content: '\e80e'; } /* '' */
+.icon-icono-de-botón:before { content: '\e80f'; } /* '' */
+.icon-globo-flotante-2:before { content: '\e810'; } /* '' */
+.icon-globo-flotante-1:before { content: '\e811'; } /* '' */
+.icon-configuración:before { content: '\e812'; } /* '' */
+.icon-cámara:before { content: '\e813'; } /* '' */
+.icon-botón-2:before { content: '\e814'; } /* '' */
+.icon-botón-1:before { content: '\e815'; } /* '' */
+.icon-cancel:before { content: '\e816'; } /* '' */
+.icon-plus-circle:before { content: '\e817'; } /* '' */
+.icon-marquee:before { content: '\e847'; } /* '' */
+.icon-doc-text-inv:before { content: '\f15c'; } /* '' */
+.icon-file-pdf:before { content: '\f1c1'; } /* '' */
+.icon-file-word:before { content: '\f1c2'; } /* '' */
+.icon-sign-language:before { content: '\f2a7'; } /* '' */
+.icon-low-vision:before { content: '\f2a8'; } /* '' */

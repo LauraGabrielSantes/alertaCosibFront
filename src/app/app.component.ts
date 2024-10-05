@@ -1,9 +1,13 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { MenuController } from '@ionic/angular';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {} from '@fortawesome/free-solid-svg-icons';
 import {
   IonApp,
+  IonButton,
   IonButtons,
   IonContent,
   IonHeader,
@@ -21,13 +25,27 @@ import {
   IonSplitPane,
   IonTitle,
   IonToolbar,
+  MenuController,
 } from '@ionic/angular/standalone';
+import { AppStateService } from '../app-state.service'; // Importa el servicio
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
+  animations: [
+    trigger('routerTransition', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)', display: 'block !important' }),
+        animate('0.5s ease-in-out', style({ transform: 'translateX(0%)' })),
+      ]),
+      transition(':leave', [
+        style({ transform: 'translateX(0%)', display: 'block !important' }),
+        animate('0.5s ease-in-out', style({ transform: 'translateX(-100%)' })),
+      ]),
+    ]),
+  ],
   imports: [
     RouterLink,
     RouterLinkActive,
@@ -50,35 +68,40 @@ import {
     IonTitle,
     IonButtons,
     IonMenuButton,
+    IonButton,
+    FormsModule,
+    ReactiveFormsModule,
+    CommonModule,
+    FontAwesomeModule,
   ],
 })
-export class AppComponent {
-  // Propiedad para almacenar el título
-  pageTitle: string = 'Emergencia'; // Título inicial
-
+export class AppComponent implements OnInit {
+  // Propiedades para almacenar el título y el fondo
+  pageTitle: string = ''; // Título inicial
+  backgroundClass: string = 'background-default'; // Clase de fondo inicial
   constructor(
     private readonly router: Router,
-    private readonly menu: MenuController,
+    private readonly menuCtrl: MenuController,
+    private readonly appStateService: AppStateService, // Inyecta el servicio
   ) {}
 
-  // Método para navegar y cambiar el título
-  async navigateTo(page: string) {
-    // Cambia el título según la opción seleccionada
-    switch (page) {
-      case 'emergencia':
-        this.pageTitle = 'Emergencia';
-        break;
-      case 'servicios':
-        this.pageTitle = 'Servicios COSIB';
-        break;
-      case 'configuracion':
-        this.pageTitle = 'Configuración';
-        break;
-      default:
-        this.pageTitle = 'este es el titulo de la pagina'; // Título por defecto
-    }
+  ngOnInit() {
+    this.appStateService.currentTitle.subscribe((title) => {
+      this.pageTitle = title;
+    });
 
+    this.appStateService.currentBackgroundClass.subscribe((backgroundClass) => {
+      this.backgroundClass = backgroundClass;
+    });
+  }
+  async openMenu() {
+    this.menuCtrl.enable(true, 'main-menu'); // Habilitar el menú con el ID 'main-menu'
+    const a = await this.menuCtrl.get('main-menu');
+    a?.toggle();
+  }
+  // Método para navegar y cambiar el título y fondo a través del servicio
+  async navigateTo(page: string) {
     await this.router.navigate([`/${page}`]);
-    await this.menu.close();
+    await this.menuCtrl.close();
   }
 }

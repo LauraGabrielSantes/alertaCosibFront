@@ -80,7 +80,6 @@ ion-menu::part(container) {
   margin: 1rem;
   margin-top: 1rem;
   .opciones {
-    //pointer
     cursor: pointer;
   }
   .opcion {
@@ -98,4 +97,80 @@ ion-menu::part(container) {
     margin-right: 1rem; /* Optional: Adds space between the icon and text */
     padding: 0.5rem;
   }
+}
+
+.cabecera-menu-content {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra el contenido horizontalmente */
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 1rem;
+  padding-top: 2.5rem;
+
+  h1 {
+    margin: 0; /* Elimina el margen por defecto del h1 */
+    margin-left: 1rem; /* Márgenes laterales elegantes */
+    flex-grow: 1; /* Permite que el h1 ocupe el espacio disponible */
+    text-align: left; /* Centra el texto horizontalmente */
+    font-size: 1.8rem;
+    font-weight: bold;
+  }
+
+  .icono-menu-content {
+    margin: 0 0.7rem; /* Márgenes laterales elegantes */
+    font-size: 2.2rem;
+  }
+}
+.background-default {
+  ion-content {
+    --background: linear-gradient(
+        to bottom,
+        rgba(235, 240, 242, 1) 20%,
+        rgb(235, 240, 242, 0.3)
+      ),
+      var(--ion-color-tertiary) no-repeat center -10% / auto 130% url("../assets/texturas/png/Fondo-azul.png");
+  }
+  ion-menu-button {
+    --background: rgb(255, 255, 255);
+  }
+  .cabecera-menu-content {
+    color: black;
+  }
+}
+
+.background-danger {
+  ion-content {
+    --background: linear-gradient(
+        to bottom,
+        rgba(250, 17, 13, 1) 20%,
+        rgba(250, 17, 13, 0)
+      ),
+      var(--ion-color-danger) no-repeat center -10% / auto 130% url("../assets/texturas/png/Fondo-rojo.png");
+    color: var(--ion-color-tertiary);
+    --ion-text-color: var(--ion-color-tertiary);
+  }
+
+  ion-menu-button {
+    --background: rgb(255, 255, 255);
+  }
+
+  .cabecera-menu-content {
+    color: var(--ion-color-tertiary);
+  }
+}
+
+.ion-page,
+ion-app,
+.cabecera,
+ion-buttons {
+  --background: transparent;
+  --ion-item-background: transparent;
+}
+* {
+  --background: transparent;
+}
+.principal {
+  margin: 2rem;
+  margin-top: 6rem;
 }
