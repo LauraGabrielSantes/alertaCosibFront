@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
@@ -23,12 +23,51 @@ import { AppStateService } from 'src/app-state.service';
     FormsModule,
   ],
 })
-export class EmergenciaPage {
-  constructor(
-    private readonly appStateService: AppStateService, // Inyecta el servicio
-  ) {}
-  ionViewWillEnter() {
+export class EmergenciaPage implements OnDestroy {
+  private intervalId: any;
+
+  constructor(private readonly appStateService: AppStateService) {
     this.appStateService.changeTitle('Emergencia');
-    this.appStateService.changeBackgroundDanger();
+  }
+
+  ionViewWillEnter() {
+    this.appStateService.startLoading();
+    // Pruebo cada 3 segundos si hay conexión
+
+    this.appStateService.changeTitle('Emergencia');
+    // Función para checar la conexión y cambiar el fondo
+    const checkConnection = async () => {
+      if (await this.checarConexion()) {
+        this.appStateService.changeBackgroundGris();
+      } else {
+        this.appStateService.changeBackgroundDanger();
+      }
+    };
+
+    // Checar la conexión inmediatamente
+    checkConnection();
+    this.intervalId = setInterval(() => {
+      checkConnection();
+      this.appStateService.stopLoading();
+    }, 3000);
+  }
+
+  ionViewWillLeave() {
+    // Al salir, paro el intervalo
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
+  ngOnDestroy() {
+    // Asegurarse de limpiar el intervalo si el componente se destruye
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+
+  private async checarConexion(): Promise<boolean> {
+    return false; // Ejemplo de retorno
   }
 }

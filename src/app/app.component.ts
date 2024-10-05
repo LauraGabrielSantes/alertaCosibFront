@@ -16,12 +16,14 @@ import {
   IonLabel,
   IonList,
   IonListHeader,
+  IonLoading,
   IonMenu,
   IonMenuButton,
   IonMenuToggle,
   IonNote,
   IonRouterLink,
   IonRouterOutlet,
+  IonSpinner,
   IonSplitPane,
   IonTitle,
   IonToolbar,
@@ -73,12 +75,15 @@ import { AppStateService } from '../app-state.service'; // Importa el servicio
     ReactiveFormsModule,
     CommonModule,
     FontAwesomeModule,
+    IonLoading,
+    IonSpinner,
   ],
 })
 export class AppComponent implements OnInit {
   // Propiedades para almacenar el título y el fondo
   pageTitle: string = ''; // Título inicial
   backgroundClass: string = 'background-default'; // Clase de fondo inicial
+  isLoading = false;
   constructor(
     private readonly router: Router,
     private readonly menuCtrl: MenuController,
@@ -92,6 +97,9 @@ export class AppComponent implements OnInit {
 
     this.appStateService.currentBackgroundClass.subscribe((backgroundClass) => {
       this.backgroundClass = backgroundClass;
+    });
+    this.appStateService.isLoading.subscribe((loading) => {
+      this.isLoading = loading;
     });
   }
   async openMenu() {

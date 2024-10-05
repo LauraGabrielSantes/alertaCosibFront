@@ -129,7 +129,8 @@ ion-menu::part(container) {
         rgba(235, 240, 242, 1) 20%,
         rgb(235, 240, 242, 0.3)
       ),
-      var(--ion-color-tertiary) no-repeat center -10% / auto 130% url("../assets/texturas/png/Fondo-azul.png");
+      var(--ion-color-tertiary) no-repeat center 60% / auto 140%
+        url("../assets/texturas/png/Fondo-azul.png");
   }
   ion-menu-button {
     --background: rgb(255, 255, 255);
@@ -146,7 +147,51 @@ ion-menu::part(container) {
         rgba(250, 17, 13, 1) 20%,
         rgba(250, 17, 13, 0)
       ),
-      var(--ion-color-danger) no-repeat center -10% / auto 130% url("../assets/texturas/png/Fondo-rojo.png");
+      var(--ion-color-danger) no-repeat center 60% / auto 140%
+        url("../assets/texturas/png/Fondo-rojo.png");
+    color: var(--ion-color-tertiary);
+    --ion-text-color: var(--ion-color-tertiary);
+  }
+
+  ion-menu-button {
+    --background: rgb(255, 255, 255);
+  }
+
+  .cabecera-menu-content {
+    color: var(--ion-color-tertiary);
+  }
+}
+
+.background-blue {
+  ion-content {
+    --background: linear-gradient(
+        to bottom,
+        rgba(42, 45, 66, 1),
+        rgba(42, 45, 66, 0)
+      ),
+      var(--ion-color-secondary) no-repeat center 60% / auto 140%
+        url("../assets/texturas/png/Fondo-azul.png");
+    color: var(--ion-color-tertiary);
+    --ion-text-color: var(--ion-color-tertiary);
+  }
+
+  ion-menu-button {
+    --background: rgb(255, 255, 255);
+  }
+
+  .cabecera-menu-content {
+    color: var(--ion-color-tertiary);
+  }
+}
+.background-gray {
+  ion-content {
+    --background: linear-gradient(
+        to bottom,
+        rgba(139, 151, 171, 1),
+        rgba(139, 151, 171, 0)
+      ),
+      var(--ion-color-success) no-repeat center 60% / auto 140%
+        url("../assets/texturas/png/Fondo-gris-oscuro.png");
     color: var(--ion-color-tertiary);
     --ion-text-color: var(--ion-color-tertiary);
   }
@@ -173,4 +218,22 @@ ion-buttons {
 .principal {
   margin: 2rem;
   margin-top: 6rem;
+}
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(43, 4, 133, 0.086); /* Fondo semitransparente */
+  z-index: 9999; /* Asegura que esté por encima de otros elementos */
+}
+
+.large-spinner {
+  --spinner-width: 1300px;
+  --spinner-height: 1300px;
+  --spinner-color: var(--ion-color-secondary);
 }
