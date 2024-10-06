@@ -81,15 +81,18 @@ import { AppStateService } from '../app-state.service'; // Importa el servicio
 })
 export class AppComponent implements OnInit {
   // Propiedades para almacenar el título y el fondo
+  helpBubbleExpanded = false;
   pageTitle: string = ''; // Título inicial
   backgroundClass: string = 'background-default'; // Clase de fondo inicial
   isLoading = false;
+  isAlertActive;
   constructor(
     private readonly router: Router,
     private readonly menuCtrl: MenuController,
     private readonly appStateService: AppStateService, // Inyecta el servicio
-  ) {}
-
+  ) {
+    this.isAlertActive = this.appStateService.getAlertStatus();
+  }
   ngOnInit() {
     this.appStateService.currentTitle.subscribe((title) => {
       this.pageTitle = title;
@@ -101,6 +104,9 @@ export class AppComponent implements OnInit {
     this.appStateService.isLoading.subscribe((loading) => {
       this.isLoading = loading;
     });
+    this.appStateService.isActiveAlert.subscribe((alert) => {
+      this.isAlertActive = alert ?? false;
+    });
   }
   async openMenu() {
     this.menuCtrl.enable(true, 'main-menu'); // Habilitar el menú con el ID 'main-menu'
@@ -111,5 +117,8 @@ export class AppComponent implements OnInit {
   async navigateTo(page: string) {
     await this.router.navigate([`/${page}`]);
     await this.menuCtrl.close();
+  }
+  showHelp() {
+    this.helpBubbleExpanded = !this.helpBubbleExpanded;
   }
 }

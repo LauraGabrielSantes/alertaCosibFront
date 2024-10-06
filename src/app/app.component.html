@@ -13,6 +13,12 @@
         <h1> {{pageTitle}}</h1>
       </div>
       <ion-router-outlet class="principal" [animated]="true"></ion-router-outlet>
+
+      @if(isAlertActive){
+      <div class="help-bubble " [class.expanded]="helpBubbleExpanded" (click)="showHelp()">
+        <span class="icon-globo-flotante-2"></span> @if (helpBubbleExpanded) { Status : activo}
+      </div>
+      }
     </ion-content>
   </ion-app>
 </ion-split-pane>

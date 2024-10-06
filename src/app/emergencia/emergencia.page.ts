@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
+  IonButton,
   IonContent,
   IonHeader,
   IonTitle,
@@ -21,61 +22,68 @@ import { AppStateService } from 'src/app-state.service';
     IonToolbar,
     CommonModule,
     FormsModule,
+    IonButton,
   ],
 })
 export class EmergenciaPage implements OnDestroy {
   private intervalId: any = null;
   private connectionStatus: boolean = false;
   texto = 'no hay conexión';
-  constructor(private readonly appStateService: AppStateService) {
-    this.appStateService.changeBackgroundDanger();
-  }
+
+  constructor(private readonly appStateService: AppStateService) {}
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
-    this.pintaPantalla();
-    this.intervalId = setInterval(async () => {
-      await this.checarConexion();
-      await this.pintaPantalla();
-    }, 1000);
+    this.updateScreen();
+    this.startConnectionCheck();
   }
 
-  private async pintaPantalla() {
-    if (this.connectionStatus) {
-      this.pintaHayConexion();
-      this.texto = 'hay conexión';
-    } else {
-      this.pintaNoHayConexion();
-      this.texto = 'no hay conexión';
-    }
+  ionViewWillLeave() {
+    this.cleanup();
+  }
+
+  ngOnDestroy() {
+    this.cleanup();
+  }
+
+  private async updateScreen() {
+    this.texto = this.connectionStatus ? 'hay conexión' : 'no hay conexión';
+    this.connectionStatus
+      ? this.setGrayBackground()
+      : this.setDangerBackground();
     this.appStateService.stopLoading();
   }
 
-  private pintaHayConexion() {
+  private setGrayBackground() {
     this.appStateService.changeBackgroundGris();
   }
-  private pintaNoHayConexion() {
+
+  private setDangerBackground() {
     this.appStateService.changeBackgroundDanger();
   }
 
-  private async checarConexion(): Promise<boolean> {
+  private async checkConnection(): Promise<void> {
     this.connectionStatus = true;
-    return true;
   }
 
-  private clearInterval() {
+  private startConnectionCheck() {
+    this.intervalId = setInterval(async () => {
+      await this.checkConnection();
+      await this.updateScreen();
+    }, 1000);
+  }
+
+  private cleanup() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
-  }
-  ionViewWillLeave() {
-    this.clearInterval();
     this.appStateService.stopLoading();
   }
-
-  ngOnDestroy() {
-    this.clearInterval();
-    this.appStateService.stopLoading();
+  sendAlert() {
+    this.appStateService.startAlert();
+  }
+  apagarAlerta() {
+    this.appStateService.stopAlert();
   }
 }

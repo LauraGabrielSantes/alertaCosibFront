@@ -237,3 +237,39 @@ ion-buttons {
   --spinner-height: 1300px;
   --spinner-color: var(--ion-color-secondary);
 }
+
+.help-bubble {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 5rem;
+  height: 5rem;
+  background-color: var(--ion-color-secondary);
+  border-radius: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    font-size 0.3s ease;
+
+  &.expanded {
+    width: 90%;
+    font-size: 1rem;
+    border-radius: 2.5rem;
+    align-items: left;
+    justify-content: left;
+  }
+
+  .icon-globo-flotante-2 {
+    color: var(--ion-color-danger);
+
+    font-size: 4rem;
+  }
+}
