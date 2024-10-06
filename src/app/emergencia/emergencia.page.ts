@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonButton,
@@ -25,12 +25,15 @@ import { AppStateService } from 'src/app-state.service';
     IonButton,
   ],
 })
-export class EmergenciaPage implements OnDestroy {
+export class EmergenciaPage implements OnInit, OnDestroy {
   private intervalId: any = null;
   private connectionStatus: boolean = false;
-  texto = 'no hay conexión';
 
   constructor(private readonly appStateService: AppStateService) {}
+  async ngOnInit() {
+    await this.checkConnection();
+    await this.updateScreen();
+  }
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
@@ -45,17 +48,15 @@ export class EmergenciaPage implements OnDestroy {
   ngOnDestroy() {
     this.cleanup();
   }
-
   private async updateScreen() {
-    this.texto = this.connectionStatus ? 'hay conexión' : 'no hay conexión';
     this.connectionStatus
-      ? this.setGrayBackground()
+      ? this.setDefaultBackground()
       : this.setDangerBackground();
     this.appStateService.stopLoading();
   }
 
-  private setGrayBackground() {
-    this.appStateService.changeBackgroundGris();
+  private setDefaultBackground() {
+    this.appStateService.defaultBackground();
   }
 
   private setDangerBackground() {
