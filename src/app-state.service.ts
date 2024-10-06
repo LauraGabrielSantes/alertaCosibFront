@@ -82,13 +82,31 @@ export class AppStateService {
 
   // Guarda la localización en localStorage
   saveLocation(location: GeolocationCoordinates) {
+    //guardo la hora y el dia en que se guardo la localizacion\
+    const date = new Date();
+    //la guardo
+    localStorage.setItem('date', date + '');
     localStorage.setItem('localizacion', JSON.stringify(location));
   }
 
-  // Obtiene la localización desde localStorage
   getLocation(): GeolocationCoordinates | null {
+    const dateString = localStorage.getItem('date');
     const location = localStorage.getItem('localizacion');
-    return location ? JSON.parse(location) : null;
+    if (!location) {
+      return null;
+    }
+    if (!dateString) {
+      localStorage.removeItem('localizacion');
+      return null;
+    }
+    const date = new Date(dateString);
+    const now = new Date();
+    if (now.getTime() - date.getTime() > 3600000) {
+      localStorage.removeItem('localizacion');
+      localStorage.removeItem('date');
+      return null;
+    }
+    return JSON.parse(location);
   }
 
   // Obtiene la localización actual del dispositivo
@@ -148,10 +166,11 @@ export class AppStateService {
 
   getIsUam(): boolean | PromiseLike<boolean | null> | null {
     const isUam = localStorage.getItem('isUam');
-    this.isUamSource.next(isUam === 'true');
     if (isUam === null) {
+      this.isUamSource.next(null);
       return null;
     }
+    this.isUamSource.next(isUam === 'true');
     return isUam === 'true';
   }
 }
