@@ -3,17 +3,31 @@
   <div class="overlay-content">
     <!-- Ejemplo de contenido superpuesto -->
     <p>
-      @if(connectionStatus){Mantén presionado el botón de emergencia
-      durante 3 segundos para enviar una alerta}
-      @else{Parece que no tienes conexión a internet
-      o el servidor de asistencia no está en línea. Llama al 911.}
+      @if(connectionStatus){
+      <!---->@if(isUam !==false){
+      Mantén presionado el botón de emergencia
+      durante 3 segundos para enviar una alerta
+      a la Unidad de Asistencia Médica.
+      <!---->}@else{
+      Parece que no estás en la UAM, se envio una alerta pero no se te podra asistir.
+      llama al 911.
+      }
+
+      }
+      @else{
+      Parece que no tienes conexión a internet
+      o el servidor de asistencia no está en línea. Llama al 911.
+      }
     </p>
+
+
+
   </div>
 </div>
 
 <div class="full-screen-container">
 
-  @if(connectionStatus){
+  @if(connectionStatus && isUam !==false ){
   <div class="centered-circle" (touchend)="resetTimer()" (touchstart)="startTimer()" (keydown.enter)="startTimer()  "
     (mousedown)="startTimer()" (mouseup)="resetTimer()" (mouseleave)="resetTimer()">
     <div class="contador">
@@ -21,8 +35,8 @@
     </div>
   </div>
   }@else{
-  <div class="centered-circle-no" (touchstart)="call911()" (mousedown)="call911()" (mouseup)="call911()"
-    (mouseleave)="call911()">
+  <div [ngClass]="(isUam !== false) ? 'centered-circle-no' : 'centered-circle-no-nouam'" (click)="call911()"
+    (touchstart)="call911()" (mousedown)="call911()" (keydown)="call911()">
     <div class="texto-no">
       Llamar al<br>
       <span class="numero">911</span>
@@ -30,3 +44,9 @@
   </div>
   }
 </div>
+
+@if(connectionStatus && isUam ===false){
+<div class="boton-inferior">
+  <button class="boton" (click)="cancelar()">Cancelar Alerta</button>
+</div>
+}

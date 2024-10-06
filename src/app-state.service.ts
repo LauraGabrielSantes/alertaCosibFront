@@ -13,12 +13,12 @@ export class AppStateService {
   private readonly isLoadingSource = new BehaviorSubject<boolean>(false);
   private readonly isActiveAlertSource: BehaviorSubject<boolean | null> =
     new BehaviorSubject<boolean | null>(null);
-
+  private readonly isUamSource = new BehaviorSubject<boolean | null>(null);
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
   isLoading = this.isLoadingSource.asObservable();
   isActiveAlert = this.isActiveAlertSource.asObservable();
-
+  isUam = this.isUamSource.asObservable();
   constructor() {
     const storedAlertStatus = localStorage.getItem('isActiveAlert');
     const initialAlertStatus =
@@ -54,13 +54,16 @@ export class AppStateService {
     this.isLoadingSource.next(false);
   }
 
-  startAlert() {
+  startAlert(isUam: boolean | null = false) {
+    this.setInUam(isUam);
     this.isActiveAlertSource.next(true);
     localStorage.setItem('isActiveAlert', 'true');
   }
 
   stopAlert() {
     this.isActiveAlertSource.next(false);
+    this.setInUam(null);
+    this.isUamSource.next(null);
     localStorage.setItem('isActiveAlert', 'false');
   }
   getAlertStatus(): boolean {
@@ -132,5 +135,23 @@ export class AppStateService {
         );
       }
     }
+  }
+
+  setInUam(isUam: boolean | null) {
+    this.isUamSource.next(isUam);
+    if (isUam === null) {
+      localStorage.removeItem('isUam');
+    } else {
+      localStorage.setItem('isUam', isUam.toString());
+    }
+  }
+
+  getIsUam(): boolean | PromiseLike<boolean | null> | null {
+    const isUam = localStorage.getItem('isUam');
+    this.isUamSource.next(isUam === 'true');
+    if (isUam === null) {
+      return null;
+    }
+    return isUam === 'true';
   }
 }

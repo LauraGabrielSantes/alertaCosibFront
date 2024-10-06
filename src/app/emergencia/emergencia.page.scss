@@ -4,6 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,8 +16,8 @@
   position: relative;
   width: 60vw;
   height: 60vw;
-  max-width: 100vh;
-  max-height: 100vh;
+  max-width: 26rem;
+  max-height: 26rem;
   background-image: url("/assets/icon/SVG/Botón 1.svg");
   background-size: cover;
   background-position: center;
@@ -41,21 +42,53 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-.texto-no {
-  color: rgb(0, 0, 0);
-  font-size: 6vw;
-  font-weight: bold;
-  z-index: 10;
-  .numero {
-    font-size: 8vw;
+  .texto-no {
+    color: rgb(0, 0, 0);
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 10;
+    .numero {
+      font-size: 3rem;
+    }
   }
 }
+
+.centered-circle-no-nouam {
+  position: relative;
+  width: 60vw;
+  height: 60vw;
+  max-width: 100vh;
+  max-height: 100vh;
+  background-image: url("/assets/icon/SVG/Botón 1.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  .texto-no {
+    color: rgb(255, 255, 255);
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 10;
+    .numero {
+      font-size: 3rem;
+    }
+  }
+}
+
 .contador {
   color: white;
   font-size: 20vw;
   font-weight: bold;
   z-index: 10;
+  @media screen and (max-width: 768px) {
+    font-size: 15vw;
+  }
+  @media screen and (min-width: 785px) {
+    font-size: 7rem;
+  }
 }
 .centered-circle::before {
   content: "";

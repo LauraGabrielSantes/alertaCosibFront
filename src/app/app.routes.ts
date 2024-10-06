@@ -23,4 +23,8 @@ export const routes: Routes = [
         (m) => m.ConfiguracionPage,
       ),
   },
+  {
+    path: 'selecciona',
+    loadComponent: () => import('./selecciona/selecciona.page').then( m => m.SeleccionaPage)
+  },
 ];

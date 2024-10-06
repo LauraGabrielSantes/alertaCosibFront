@@ -62,3 +62,23 @@
   --ion-color-dark-shade: #292929;
   --ion-color-dark-tint: #444444;
 }
+
+.boton-inferior {
+  position: absolute;
+  bottom: 50px; /* Adjust as needed */
+  width: 100%;
+  text-align: center;
+  z-index: 10;
+  color: white;
+}
+.boton {
+  font-size: 0.6 rem;
+  border-radius: 6px;
+  font-weight: bold;
+  padding: 8px 10px;
+  color: rgb(255, 255, 255);
+  background-color: transparent;
+  --background: none;
+  //borde solido de 1 px blanco
+  border: 1px solid rgb(255, 255, 255);
+}

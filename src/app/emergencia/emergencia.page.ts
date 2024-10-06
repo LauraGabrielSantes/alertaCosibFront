@@ -11,6 +11,7 @@ import {
 import { AppStateService } from 'src/app-state.service';
 import { BotonService } from 'src/services/boton.service';
 
+const TotalTime = 3;
 @Component({
   selector: 'app-emergencia',
   templateUrl: './emergencia.page.html',
@@ -26,26 +27,33 @@ import { BotonService } from 'src/services/boton.service';
     IonButton,
   ],
 })
+//status
 export class EmergenciaPage implements OnInit, OnDestroy {
   private intervalId: any = null;
-
   connectionStatus: boolean = false;
-  readonly TotalTime = 3;
-  countdown: number = 3;
+
+  countdown: number = TotalTime;
   private countdownInterval: any;
+  isUam: boolean | null = null;
   constructor(
     private readonly appStateService: AppStateService,
     private readonly botonService: BotonService,
   ) {}
   async ngOnInit() {
     this.connectionStatus = await this.botonService.checarComunicacion();
+    this.isUam = await this.appStateService.getIsUam();
     await this.updateScreen();
+    this.appStateService.isUam.subscribe(async (isUam) => {
+      this.isUam = isUam;
+      await this.updateScreen();
+    });
   }
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
     this.updateScreen();
     this.startConnectionCheck();
+    this.countdown = TotalTime;
   }
 
   ionViewWillLeave() {
@@ -59,6 +67,9 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     this.connectionStatus
       ? this.setDefaultBackground()
       : this.setDangerBackground();
+    if (this.isUam === false) {
+      this.setBlueBackground();
+    }
   }
 
   private setDefaultBackground() {
@@ -67,6 +78,9 @@ export class EmergenciaPage implements OnInit, OnDestroy {
 
   private setDangerBackground() {
     this.appStateService.changeBackgroundDanger();
+  }
+  private setBlueBackground() {
+    this.appStateService.changeBackgroundAzul();
   }
 
   private startConnectionCheck() {
@@ -94,7 +108,7 @@ export class EmergenciaPage implements OnInit, OnDestroy {
       this.enviarAlerta();
       return;
     }
-    if (this.countdown <= this.TotalTime) {
+    if (this.countdown <= TotalTime) {
       this.countdown--;
       this.countdownInterval = setInterval(() => {
         if (this.countdown > 1) {
@@ -124,13 +138,17 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     const aInterval = setInterval(() => {
       if (this.countdown != 0) {
         if (this.countdown >= time) {
-          this.countdown = this.TotalTime;
+          this.countdown = TotalTime;
           clearInterval(aInterval);
         }
       }
     }, 600);
   }
-  enviarAlerta() {
+  private enviarAlerta() {
     this.botonService.sendAlert();
+  }
+  cancelar() {
+    this.botonService.cancelarAlerta();
+    this.countdown = TotalTime;
   }
 }
