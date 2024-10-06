@@ -14,7 +14,8 @@
 <div class="full-screen-container">
 
   @if(connectionStatus){
-  <div class="centered-circle" (mousedown)="startTimer()" (mouseup)="resetTimer()" (mouseleave)="resetTimer()">
+  <div class="centered-circle" (touchend)="resetTimer()" (touchstart)="startTimer()" (keydown.enter)="startTimer()  "
+    (mousedown)="startTimer()" (mouseup)="resetTimer()" (mouseleave)="resetTimer()">
     <div class="contador">
       {{countdown}}
     </div>
