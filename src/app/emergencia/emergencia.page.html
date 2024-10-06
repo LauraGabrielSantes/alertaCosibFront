@@ -21,13 +21,12 @@
     </div>
   </div>
   }@else{
-  <div class="centered-circle-no" (mousedown)="call911()" (mouseup)="call911()" (mouseleave)="call911()">
+  <div class="centered-circle-no" (touchstart)="call911()" (mousedown)="call911()" (mouseup)="call911()"
+    (mouseleave)="call911()">
     <div class="texto-no">
       Llamar al<br>
       <span class="numero">911</span>
     </div>
   </div>
   }
-
-
 </div>

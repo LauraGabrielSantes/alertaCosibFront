@@ -9,6 +9,7 @@ import {
   IonToolbar,
 } from '@ionic/angular/standalone';
 import { AppStateService } from 'src/app-state.service';
+import { BotonService } from 'src/services/boton.service';
 
 @Component({
   selector: 'app-emergencia',
@@ -32,9 +33,12 @@ export class EmergenciaPage implements OnInit, OnDestroy {
   readonly TotalTime = 3;
   countdown: number = 3;
   private countdownInterval: any;
-  constructor(private readonly appStateService: AppStateService) {}
+  constructor(
+    private readonly appStateService: AppStateService,
+    private readonly botonService: BotonService,
+  ) {}
   async ngOnInit() {
-    await this.checkConnection();
+    this.connectionStatus = await this.botonService.checarComunicacion();
     await this.updateScreen();
   }
 
@@ -55,7 +59,6 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     this.connectionStatus
       ? this.setDefaultBackground()
       : this.setDangerBackground();
-    this.appStateService.stopLoading();
   }
 
   private setDefaultBackground() {
@@ -66,13 +69,9 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     this.appStateService.changeBackgroundDanger();
   }
 
-  private async checkConnection(): Promise<void> {
-    this.connectionStatus = true;
-  }
-
   private startConnectionCheck() {
     this.intervalId = setInterval(async () => {
-      await this.checkConnection();
+      this.connectionStatus = await this.botonService.checarComunicacion();
       await this.updateScreen();
     }, 1000);
   }
@@ -82,7 +81,6 @@ export class EmergenciaPage implements OnInit, OnDestroy {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
-    this.appStateService.stopLoading();
   }
   call911() {
     window.location.href = 'tel:911';
@@ -133,6 +131,6 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     }, 600);
   }
   enviarAlerta() {
-    console.log('Alerta enviada');
+    this.botonService.sendAlert();
   }
 }
