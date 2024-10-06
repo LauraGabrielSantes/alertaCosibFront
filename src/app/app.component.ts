@@ -1,5 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
+import { Device } from '@capacitor/device';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -93,7 +95,8 @@ export class AppComponent implements OnInit {
   ) {
     this.isAlertActive = this.appStateService.getAlertStatus();
   }
-  ngOnInit() {
+  async ngOnInit() {
+    await this.generateDeviceIdAndLocation();
     this.appStateService.currentTitle.subscribe((title) => {
       this.pageTitle = title;
     });
@@ -120,5 +123,27 @@ export class AppComponent implements OnInit {
   }
   showHelp() {
     this.helpBubbleExpanded = !this.helpBubbleExpanded;
+  }
+
+  private async generateDeviceIdAndLocation() {
+    try {
+      const id = await Device.getId();
+      this.appStateService.saveIdDevice(id.identifier);
+    } catch (error) {
+      console.error('Error al obtener el ID del dispositivo:', error);
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.appStateService.saveLocation(position.coords);
+        },
+        (error) => {
+          console.error('Error al obtener la localización:', error);
+        },
+      );
+    } else {
+      console.error('Geolocalización no es compatible con este navegador.');
+    }
   }
 }

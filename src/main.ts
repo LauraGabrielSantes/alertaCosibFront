@@ -3,6 +3,7 @@ import {
   PreloadAllModules,
   RouteReuseStrategy,
   provideRouter,
+  withHashLocation,
   withPreloading,
 } from '@angular/router';
 import {
@@ -24,6 +25,7 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideRouter(routes, withHashLocation()),
     provideHttpClient(),
     { provide: BASE_PATH, useValue: environment.apiUrl },
     //  provideNoopAnimations(),

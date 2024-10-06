@@ -8,20 +8,55 @@
   align-items: center;
   justify-content: center;
   z-index: 10; /* Ensure it is above the overlay-container */
+  user-select: none; /* Evita la selección de texto */
 }
 
 .centered-circle {
   position: relative;
-  width: 80vw;
-  height: 80vw;
+  width: 60vw;
+  height: 60vw;
   max-width: 100vh;
   max-height: 100vh;
   background-image: url("/assets/icon/SVG/Botón 1.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
+.centered-circle-no {
+  position: relative;
+  width: 60vw;
+  height: 60vw;
+  max-width: 100vh;
+  max-height: 100vh;
+  background-image: url("/assets/icon/SVG/Botón 2.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.texto-no {
+  color: rgb(0, 0, 0);
+  font-size: 6vw;
+  font-weight: bold;
+  z-index: 10;
+  .numero {
+    font-size: 8vw;
+  }
+}
+.contador {
+  color: white;
+  font-size: 20vw;
+  font-weight: bold;
+  z-index: 10;
+}
 .centered-circle::before {
   content: "";
   position: absolute;
@@ -74,6 +109,7 @@
   text-align: center;
   padding: 20px;
   font-weight: bold;
+  font-size: 10px;
   border-radius: 10px;
   margin-top: 20px; /* Optional: Add some margin from the top */
 }

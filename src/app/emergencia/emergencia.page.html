@@ -2,14 +2,31 @@
   <!-- Aquí puedes añadir los elementos que quieres poner encima -->
   <div class="overlay-content">
     <!-- Ejemplo de contenido superpuesto -->
-    <p>Mantén presionado el botón de emergencia
-      durante 3 segundos para enviar una alerta</p>
+    <p>
+      @if(connectionStatus){Mantén presionado el botón de emergencia
+      durante 3 segundos para enviar una alerta}
+      @else{Parece que no tienes conexión a internet
+      o el servidor de asistencia no está en línea. Llama al 911.}
+    </p>
   </div>
 </div>
+
 <div class="full-screen-container">
-  <div class="centered-circle">
-    <div>
-      quiero este texto centrado
+
+  @if(connectionStatus){
+  <div class="centered-circle" (mousedown)="startTimer()" (mouseup)="resetTimer()" (mouseleave)="resetTimer()">
+    <div class="contador">
+      {{countdown}}
     </div>
   </div>
+  }@else{
+  <div class="centered-circle-no" (mousedown)="call911()" (mouseup)="call911()" (mouseleave)="call911()">
+    <div class="texto-no">
+      Llamar al<br>
+      <span class="numero">911</span>
+    </div>
+  </div>
+  }
+
+
 </div>

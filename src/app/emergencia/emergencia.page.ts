@@ -27,8 +27,11 @@ import { AppStateService } from 'src/app-state.service';
 })
 export class EmergenciaPage implements OnInit, OnDestroy {
   private intervalId: any = null;
-  private connectionStatus: boolean = false;
 
+  connectionStatus: boolean = false;
+  readonly TotalTime = 3;
+  countdown: number = 3;
+  private countdownInterval: any;
   constructor(private readonly appStateService: AppStateService) {}
   async ngOnInit() {
     await this.checkConnection();
@@ -81,10 +84,55 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     }
     this.appStateService.stopLoading();
   }
-  sendAlert() {
-    this.appStateService.startAlert();
+  call911() {
+    window.location.href = 'tel:911';
   }
-  apagarAlerta() {
-    this.appStateService.stopAlert();
+  startTimer() {
+    if (this.countdown == 0) {
+      return;
+    }
+    if (this.countdown == 1) {
+      this.countdown--;
+      this.enviarAlerta();
+      return;
+    }
+    if (this.countdown <= this.TotalTime) {
+      this.countdown--;
+      this.countdownInterval = setInterval(() => {
+        if (this.countdown > 1) {
+          this.countdown--;
+        } else {
+          this.countdown--;
+          clearInterval(this.countdownInterval);
+          this.enviarAlerta();
+        }
+      }, 800);
+    } else {
+      this.countdown--;
+      const time = this.countdown;
+      this.countdownInterval = setInterval(() => {
+        if (this.countdown == time) {
+          this.resetTimer();
+        }
+      }, 800);
+    }
+  }
+  resetTimer() {
+    if (this.countdown == 0) {
+      return;
+    }
+    clearInterval(this.countdownInterval);
+    const time = this.countdown;
+    const aInterval = setInterval(() => {
+      if (this.countdown != 0) {
+        if (this.countdown >= time) {
+          this.countdown = this.TotalTime;
+          clearInterval(aInterval);
+        }
+      }
+    }, 600);
+  }
+  enviarAlerta() {
+    console.log('Alerta enviada');
   }
 }
