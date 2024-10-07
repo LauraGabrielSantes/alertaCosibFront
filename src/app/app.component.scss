@@ -3,7 +3,13 @@
   scroll-behavior: smooth;
   overflow-y: scroll;
 }
-
+audio {
+  // Centra el audio
+  display: block;
+  margin: 0 auto;
+  width: 1px;
+  height: 1px;
+}
 ion-menu {
   margin-top: 6rem;
   --background: none;
@@ -235,7 +241,129 @@ ion-buttons {
   justify-content: center;
   align-items: center;
   background-color: rgba(43, 4, 133, 0.086); /* Fondo semitransparente */
-  z-index: 9999; /* Asegura que esté por encima de otros elementos */
+  z-index: 999; /* Asegura que esté por encima de otros elementos */
+}
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 0, 0, 0.5); /* Fondo semitransparente rojo */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+.error-overlay .header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  img {
+    height: 20px;
+  }
+}
+.error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(
+    255,
+    0,
+    0,
+    0.7
+  ); // Fondo semitransparente rojo con mayor opacidad
+  z-index: 1000; // Asegura que esté por encima de otros elementos
+  padding: 20px; // Espacio alrededor para pantallas pequeñas
+  box-sizing: border-box;
+
+  .caja {
+    width: 100%;
+    max-width: 600px; // Limita el ancho en pantallas grandes
+    background-color: var(--ion-color-secondary); // Fondo azul
+    padding: 20px;
+    border-radius: 10px; // Esquinas más suaves
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); // Sombra más definida
+    color: var(--ion-color-tertiary); // Texto blanco
+    position: relative;
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+
+      .title {
+        font-size: 1.6em;
+        font-weight: bold;
+        text-align: left; // Asegura alineación a la izquierda
+      }
+
+      .error-close {
+        cursor: pointer;
+        font-size: 1.6em;
+        font-weight: bold;
+        color: #ffffff; // Color más oscuro para visibilidad
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #ff0000; // Cambia el color a rojo al pasar el ratón
+        }
+      }
+    }
+
+    .error-message {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .close {
+      padding: 12px 25px;
+      background-color: var(--ion-color-danger); // Fondo rojo
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 1.1em;
+      text-align: center;
+      display: block;
+      margin: 0 auto; // Centra el botón horizontalmente
+
+      &:hover {
+        background-color: var(
+          --ion-color-danger-tint
+        ); // Oscurece al pasar el ratón
+      }
+    }
+  }
+
+  // Mejora el estilo en pantallas pequeñas
+  @media (max-width: 600px) {
+    .caja {
+      padding: 15px;
+    }
+
+    .header .title {
+      font-size: 1.4em;
+    }
+
+    .close {
+      padding: 10px 20px;
+      font-size: 1em;
+    }
+  }
 }
 
 .large-spinner {
@@ -258,7 +386,7 @@ ion-buttons {
   color: white;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.4);
   z-index: 1000;
   transition:
     width 0.3s ease,
@@ -282,5 +410,24 @@ ion-buttons {
     font-size: 1.2rem;
     text-align: right;
     margin-right: 1rem;
+  }
+  .notification-inactive {
+    display: none;
+  }
+  // agrego un signo de admiracion para que se aplique solo cuando no esta expandido
+  //y su lo tiene este admiracion debe aparecer en la esquina superior derecha
+  .notification {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: var(--ion-color-danger);
+    color: white;
+    font-size: 0.8rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

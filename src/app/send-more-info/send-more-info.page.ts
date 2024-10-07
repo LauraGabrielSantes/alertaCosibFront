@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import {
   IonContent,
@@ -40,10 +41,11 @@ export class SendMoreInfoPage {
   suggestions: string[] = [];
   ubicacionEspecifica: string = '';
   textoMasInfo: string = '';
-
+  numeroDeMensajes: number = 0;
   constructor(
     private readonly appStateService: AppStateService,
     private readonly botonService: BotonService,
+    private readonly router: Router,
   ) {}
 
   EnviarTipo = EnviarTipo;
@@ -52,14 +54,24 @@ export class SendMoreInfoPage {
   private blobFoto: Blob | undefined;
   Lugares = Lugares;
   status: StatusAlerta | null = null;
+  isActiveAlert: boolean = true;
   ionViewWillEnter() {
+    this.isActiveAlert = this.appStateService.getIsActiveAlert();
+    if (!this.isActiveAlert) {
+      this.router.navigate(['']);
+    }
     this.tipoAlerta = this.appStateService.getTipoAlerta();
     this.status = this.appStateService.getStatusAlerta();
+    this.numeroDeMensajes = this.appStateService.getEnviados().length;
+
     this.appStateService.tipoAlerta.subscribe((tipo) => {
       this.tipoAlerta = tipo;
     });
     this.appStateService.statusAlerta.subscribe((status) => {
       this.status = status;
+    });
+    this.appStateService.enviados.subscribe((enviados) => {
+      this.numeroDeMensajes = enviados.length;
     });
     this.setTitulo();
     this.appStateService.changeBackgroundGris();
@@ -133,12 +145,17 @@ export class SendMoreInfoPage {
     this.enviarMasInfoTipo = null;
   }
   async enviarUbicacion() {
+    const cordenadas = await this.appStateService.getLocalizacion();
+    if (cordenadas) {
+      this.ubicacionEspecifica += `\nCordenadas: [latitud, longitud]\n[\n${cordenadas.latitude},${cordenadas.longitude}\n]`;
+    }
     if (this.selectedLugar) {
       await this.botonService.sendUbicacion(
         this.selectedLugar,
         this.ubicacionEspecifica,
       );
     }
+
     this.selectedLugar = null;
     this.ubicacionEspecifica = '';
     this.enviarMasInfoTipo = null;

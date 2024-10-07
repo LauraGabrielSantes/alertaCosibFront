@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   IonContent,
@@ -29,12 +30,18 @@ import { TipoAlerta } from '../../domain/alerta';
 })
 export class SeleccionaPage implements OnInit {
   TipoAlerta = TipoAlerta;
+  isActiveAlert: boolean = true;
   constructor(
     private readonly appStateService: AppStateService,
     private readonly botonService: BotonService,
+    private readonly router: Router,
   ) {}
   ngOnInit() {}
   ionViewWillEnter() {
+    this.isActiveAlert = this.appStateService.getIsActiveAlert();
+    if (!this.isActiveAlert) {
+      this.router.navigate(['']);
+    }
     this.appStateService.changeTitle('Botón de Emergencia');
     this.appStateService.changeBackgroundGris();
   }

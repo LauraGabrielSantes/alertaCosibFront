@@ -22,6 +22,11 @@ export enum StatusAlerta {
   CANCELADA = 'Cancelada',
   ENVIADA = 'Enviada',
   RECHAZADA = 'Rechazada',
+  terminadaPorTiempo = 'Terminada por tiempo',
+}
+export interface MessageModal {
+  title: string;
+  message: string;
 }
 
 export const Lugares = [

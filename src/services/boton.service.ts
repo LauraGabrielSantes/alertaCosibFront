@@ -19,6 +19,21 @@ export class BotonService {
 
   async sendAlert() {
     this.appStateService.startLoading();
+    const localizacion = await this.appStateService
+      .getLocalizacion()
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
+    if (localizacion === null) {
+      this.appStateService.stopLoading();
+      this.appStateService.sendMessageModal({
+        title: 'Error',
+        message:
+          '<p>No se pudo obtener la <b>ubicación<b></p> <p>Intente de nuevo habilitando la ubicacion <a href="tel:911">llamar al 911</a></p>',
+      });
+      throw new Error('No se pudo obtener la ubicación');
+    }
     this.appStateService.startAlert(true);
     this.router.navigate(['/selecciona']);
     this.appStateService.stopLoading();
@@ -55,7 +70,7 @@ export class BotonService {
 
   async sendUbicacion(selectedLugar: string, ubicacionEspecificacion: string) {
     this.appStateService.startLoading();
-    console.log('Ubicación: ', selectedLugar, ubicacionEspecificacion);
+    console.log('Ubicación: ', selectedLugar, '\n', ubicacionEspecificacion);
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const enviado: Enviado = {
       tipo: EnviarTipo.UBICACION,
@@ -91,8 +106,22 @@ export class BotonService {
       reader.readAsDataURL(blobFoto);
     });
   }
+  private contador = 0;
   getStatusAlerta(): StatusAlerta | null {
-    this.appStateService.saveStatusAlerta(StatusAlerta.ACTIVA);
-    return StatusAlerta.ACTIVA;
+    this.contador++;
+    const statusAlertaEnAplicacion = this.appStateService.getStatusAlerta();
+    if (statusAlertaEnAplicacion === StatusAlerta.terminadaPorTiempo) {
+      return StatusAlerta.terminadaPorTiempo;
+    }
+    if (this.contador <= 20) {
+      this.appStateService.saveStatusAlerta(StatusAlerta.ENVIADA);
+      return StatusAlerta.ENVIADA;
+    } else {
+      this.appStateService.saveStatusAlerta(StatusAlerta.ACTIVA);
+      return StatusAlerta.ACTIVA;
+    }
+  }
+  terminarPorTiempo() {
+    this.appStateService.saveStatusAlerta(StatusAlerta.terminadaPorTiempo);
   }
 }

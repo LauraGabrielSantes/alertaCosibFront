@@ -81,6 +81,7 @@
 
     &:hover {
       background-color: var(--ion-color-secondary); // Darken on hover
+      border-color: var(--ion-color-secondary); // Darken border on hover
       .icon {
         color: white; // Change icon color on hover
       }

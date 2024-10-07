@@ -14,7 +14,8 @@
     <ion-router-outlet class="principal" [animated]="false"></ion-router-outlet>
 
     @if(isAlertActive){
-    <div class="help-bubble " [class.expanded]="helpBubbleExpanded" (click)="showHelp()" (keydown)="showHelp()">
+    <div class="help-bubble" [class.expanded]="helpBubbleExpanded" (click)="showHelp()" (keydown)="showHelp()">
+      <span [class.notification]="notification" class="notification-inactive">!</span>
       <span class="icon-globo-flotante-2"></span>
       @if (helpBubbleExpanded) {
       <div>Estatus: {{status??"No definido"}}
@@ -38,7 +39,7 @@
     <div class="contenido-menu">
       <ion-menu-toggle>
         <div class="opciones">
-          <div class="opcion" (click)="navigateTo('emergencia')">
+          <div class="opcion" (click)="goPrincipal()">
             <img src="assets/icon/SVG/boton-emergencia-menu.svg" alt="boton" class="icono-menu">
             <div class="text-opcion">Botón de emergencia</div>
           </div>
@@ -61,3 +62,32 @@
   <ion-spinner name="crescent" class="large-spinner"></ion-spinner>
 </div>
 }
+
+@if (isModalAlert){
+<div class="error-overlay">
+  <div class="caja">
+    <div class="header">
+      <div class="title">
+        <img src="assets/icon/SVG/menurARojo.svg" alt="Menu Icon" class="icono">
+        {{modalMessage?.title}}
+      </div>
+      <div (click)="closeAlertaModal()" (keypress)="closeAlertaModal()" class="error-close">
+        x
+      </div>
+    </div>
+
+    <div class="error-message" [innerHTML]="modalMessage?.message">
+
+    </div>
+    <button class="close" (click)="closeAlertaModal()" (keypress)="closeAlertaModal()">cerrar</button>
+  </div>
+</div>
+}
+
+<audio src='assets/alert.mp3' type="audio/wav">
+  Your browser does not support the <code>audio</code> element.
+</audio>
+
+<audio src='assets/noti.wav' type="audio/wav">
+  Your browser does not support the <code>audio</code> element.
+</audio>

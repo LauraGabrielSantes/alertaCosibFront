@@ -28,23 +28,20 @@ export class ServiciosPage {
     private readonly appStateService: AppStateService, // Inyecta el servicio
     private readonly router: Router,
   ) {}
-  opcionActiva=false;
+  opcionActiva = false;
   ionViewWillEnter() {
     this.appStateService.changeTitle('Servicios');
     this.appStateService.defaultBackground();
   }
   async navigateTo(page: string) {
     await this.router.navigate([`/${page}`]);
-    
   }
 
-
-  goTelefono (numero:String){
-   let telefono='tel:'+numero;
-    window.location.href=telefono;
+  goTelefono(numero: String) {
+    let telefono = 'tel:' + numero;
+    window.location.href = telefono;
   }
-  
-  
- 
-  
+  goExternalLink(link: String) {
+    window.open(link.toString(), '_blank');
+  }
 }

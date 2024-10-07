@@ -145,7 +145,15 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     }, 600);
   }
   private enviarAlerta() {
-    this.botonService.sendAlert();
+    try {
+      const audio = new Audio('/assets/alert.mp3');
+      audio.play();
+    } catch (e) {
+      console.log(e);
+    }
+    this.botonService.sendAlert().catch((e) => {
+      this.countdown = TotalTime;
+    });
   }
   cancelar() {
     this.botonService.cancelarAlerta();

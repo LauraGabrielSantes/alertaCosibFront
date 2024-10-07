@@ -30,7 +30,7 @@ import {
   IonToolbar,
   MenuController,
 } from '@ionic/angular/standalone';
-import { StatusAlerta, TipoAlerta } from 'src/domain/alerta';
+import { MessageModal, StatusAlerta, TipoAlerta } from 'src/domain/alerta';
 import { AppStateService } from 'src/services/app-state.service';
 import { BotonService } from 'src/services/boton.service';
 
@@ -83,31 +83,78 @@ export class AppComponent implements OnInit {
   isAlertActive;
   StatusAlerta = StatusAlerta;
   status: StatusAlerta | null = null;
-
+  notification = false;
+  isModalAlert: boolean = false;
+  modalMessage: MessageModal | null = null;
   constructor(
     private readonly router: Router,
     private readonly menuCtrl: MenuController,
     private readonly appStateService: AppStateService, // Inyecta el servicio
     private readonly botonService: BotonService,
   ) {
-    this.isAlertActive = this.appStateService.getAlertStatus();
+    this.isAlertActive = this.appStateService.getIsActiveAlert();
   }
+  lastStatus: StatusAlerta | null = null;
   async ngOnInit() {
     await this.generateDeviceIdAndLocation();
-
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        console.log('Permiso de notificaciones otorgado.');
+      } else {
+        console.log('Permiso de notificaciones denegado.');
+      }
+    });
     this.tipoAlerta = this.appStateService.getTipoAlerta();
     this.status = this.botonService.getStatusAlerta();
-
-    //ahora verifico el status cada 1.5 segundos
+    this.lastStatus = this.status;
+    this.modalMessage = this.appStateService.getMessageModal();
     setInterval(async () => {
-      this.status = this.botonService.getStatusAlerta();
+      if (this.isAlertActive !== null && this.isAlertActive) {
+        this.status = this.botonService.getStatusAlerta();
+      }
     }, 500);
 
     this.appStateService.tipoAlerta.subscribe((tipo) => {
       this.tipoAlerta = tipo;
     });
+    this.appStateService.messageModal.subscribe((message) => {
+      this.modalMessage = message;
+      if (this.modalMessage !== null) {
+        this.isModalAlert = true;
+      }
+    });
+
     this.appStateService.statusAlerta.subscribe((status) => {
       this.status = status;
+      if (
+        this.lastStatus !== this.status &&
+        this.status !== null &&
+        this.lastStatus !== null &&
+        this.isAlertActive
+      ) {
+        if (Notification.permission === 'granted') {
+          const options = {
+            body: 'Estado de la alerta: ' + this.status,
+            icon: 'assets/icono.png',
+            vibrate: [200, 100, 200],
+            tag: 'Cambio de estado de la alerta',
+            renotify: true,
+          };
+
+          const notification = new Notification(
+            'Cambio de estado de la alerta',
+            options,
+          );
+          notification.onclick = (event) => {
+            window.focus();
+            this.router.navigate(['send-more-info']);
+          };
+        }
+        this.notification = true;
+        const audio = new Audio('/assets/noti.wav');
+        audio.play();
+      }
+      this.lastStatus = this.status;
     });
 
     this.appStateService.currentTitle.subscribe((title) => {
@@ -122,6 +169,17 @@ export class AppComponent implements OnInit {
     });
     this.appStateService.isActiveAlert.subscribe((alert) => {
       this.isAlertActive = alert ?? false;
+
+      if (this.isAlertActive) {
+        //dejo que pasen 30 minutos y despues termino la alerta
+        setTimeout(() => {
+          this.botonService.cancelarAlerta();
+        }, 1800000);
+        // alos 28 minutos envio a this.botonService.terminadaPorTiempo();
+        setTimeout(() => {
+          this.botonService.terminarPorTiempo();
+        }, 1680000);
+      }
     });
   }
   async openMenu() {
@@ -136,6 +194,7 @@ export class AppComponent implements OnInit {
   }
   showHelp() {
     this.helpBubbleExpanded = !this.helpBubbleExpanded;
+    this.notification = false;
   }
 
   private async generateDeviceIdAndLocation() {
@@ -165,5 +224,19 @@ export class AppComponent implements OnInit {
     } else {
       this.router.navigate(['selecciona']);
     }
+  }
+  closeAlertaModal() {
+    this.isModalAlert = false;
+  }
+  goPrincipal() {
+    if (this.isAlertActive && this.tipoAlerta !== null) {
+      this.router.navigate(['send-more-info']);
+      return;
+    }
+    if (this.isAlertActive) {
+      this.router.navigate(['selecciona']);
+      return;
+    }
+    this.router.navigate(['']);
   }
 }

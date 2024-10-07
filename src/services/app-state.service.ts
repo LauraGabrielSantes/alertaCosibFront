@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { BehaviorSubject } from 'rxjs';
-import { Enviado, StatusAlerta, TipoAlerta } from 'src/domain/alerta';
+import {
+  Enviado,
+  MessageModal,
+  StatusAlerta,
+  TipoAlerta,
+} from 'src/domain/alerta';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +26,8 @@ export class AppStateService {
   private readonly enviadosSource = new BehaviorSubject<Enviado[]>([]);
   private readonly statusAlertaSource =
     new BehaviorSubject<StatusAlerta | null>(null);
-
+  private readonly MessageModalSource =
+    new BehaviorSubject<MessageModal | null>(null);
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
   isLoading = this.isLoadingSource.asObservable();
@@ -30,6 +36,7 @@ export class AppStateService {
   tipoAlerta = this.tipoAlertaSource.asObservable();
   enviados = this.enviadosSource.asObservable();
   statusAlerta = this.statusAlertaSource.asObservable();
+  messageModal = this.MessageModalSource.asObservable();
   constructor() {
     const storedAlertStatus = localStorage.getItem('isActiveAlert');
     const initialAlertStatus =
@@ -84,7 +91,7 @@ export class AppStateService {
     localStorage.removeItem('statusAlerta');
     localStorage.setItem('isActiveAlert', 'false');
   }
-  getAlertStatus(): boolean {
+  getIsActiveAlert(): boolean {
     return this.isActiveAlertSource.value || false;
   }
 
@@ -107,7 +114,7 @@ export class AppStateService {
     localStorage.setItem('localizacion', JSON.stringify(location));
   }
 
-  getLocation(): GeolocationCoordinates | null {
+  private getLocation(): GeolocationCoordinates | null {
     const dateString = localStorage.getItem('date');
     const location = localStorage.getItem('localizacion');
     if (!location) {
@@ -247,5 +254,11 @@ export class AppStateService {
     }
     this.statusAlertaSource.next(status as StatusAlerta);
     return status as StatusAlerta;
+  }
+  public sendMessageModal(message: MessageModal) {
+    this.MessageModalSource.next(message);
+  }
+  public getMessageModal(): MessageModal | null {
+    return this.MessageModalSource.value;
   }
 }
