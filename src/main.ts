@@ -15,10 +15,10 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { BASE_PATH } from './api/generated';
-import { AppStateService } from './app-state.service';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
+import { AppStateService } from './services/app-state.service';
 // Call the element loader before the bootstrapModule/bootstrapApplication call
 defineCustomElements(window);
 bootstrapApplication(AppComponent, {

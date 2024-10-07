@@ -8,9 +8,9 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { AppStateService } from 'src/app-state.service';
+import { AppStateService } from 'src/services/app-state.service';
 import { BotonService } from 'src/services/boton.service';
-import { TipoAlerta } from '../domain/tipo-alerta';
+import { TipoAlerta } from '../../domain/alerta';
 
 @Component({
   selector: 'app-selecciona',

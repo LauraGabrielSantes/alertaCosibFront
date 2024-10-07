@@ -9,6 +9,21 @@ export enum EnviarTipo {
   UBICACION,
   MAS_INFORMACION,
 }
+export interface Enviado {
+  tipo: EnviarTipo;
+  foto?: string;
+  lugar?: string;
+  ubicacionEspecificacion?: string;
+  informacion?: string;
+}
+
+export enum StatusAlerta {
+  ACTIVA = 'Activa',
+  CANCELADA = 'Cancelada',
+  ENVIADA = 'Enviada',
+  RECHAZADA = 'Rechazada',
+}
+
 export const Lugares = [
   'Edificio A - Rectoría',
   'Edificio AA - Cómputo',

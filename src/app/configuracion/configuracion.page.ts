@@ -4,14 +4,14 @@ import { FormsModule } from '@angular/forms';
 import {
   IonContent,
   IonHeader,
-  IonTitle,
-  IonToolbar,
+  IonInput,
   IonItem,
   IonList,
-  IonInput,
   IonText,
+  IonTitle,
+  IonToolbar,
 } from '@ionic/angular/standalone';
-import { AppStateService } from 'src/app-state.service';
+import { AppStateService } from 'src/services/app-state.service';
 
 @Component({
   selector: 'app-configuracion',
@@ -39,7 +39,4 @@ export class ConfiguracionPage {
     this.appStateService.changeTitle('Configuración');
     this.appStateService.defaultBackground();
   }
-
- 
-
 }

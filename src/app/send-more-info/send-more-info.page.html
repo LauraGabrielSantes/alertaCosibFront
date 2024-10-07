@@ -5,15 +5,15 @@
     <p class="centrado">Tu alerta ha sido enviada.<br>Si tienes más información, intégrala.</p>
   </div>
   <div class="status-cuadro">
-    <div>Status de Alerta: <span class="estado">Enviado</span></div>
+    <div>Status de Alerta: <span class="estado">{{status??"Indefinido"}}</span></div>
     <div>Hora enviada: <span class="estado">432:32</span></div>
     <div>Informacion enviada: <span class="estado"> 2 mensajes</span> </div>
   </div>
 
   <div class="botones-torre">
     <div class="boton" (click)="tomarFotografia()" (keydown)="tomarFotografia()"><span class="icon icon-cámara">
-      </span> Tomar
-      Fotografía</div>
+      </span> Tomar Fotografía
+    </div>
     <div class="boton" (click)="especificarUbicacion()" (keydown)="especificarUbicacion()"><span
         class="icon icon-ubicación">
       </span>Especificar Ubicación</div>
@@ -22,7 +22,7 @@
       Enviar Más Información</div>
   </div>
   <div class="mensaje">
-    Con tu ayuda podemos mejorar nuestra atención.
+    Con tu ayuda <br />podemos mejorar nuestra atención.
   </div>
 </div>
 

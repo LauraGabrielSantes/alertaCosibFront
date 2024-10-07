@@ -30,7 +30,9 @@ import {
   IonToolbar,
   MenuController,
 } from '@ionic/angular/standalone';
-import { AppStateService } from '../app-state.service'; // Importa el servicio
+import { StatusAlerta, TipoAlerta } from 'src/domain/alerta';
+import { AppStateService } from 'src/services/app-state.service';
+import { BotonService } from 'src/services/boton.service';
 
 @Component({
   selector: 'app-root',
@@ -70,21 +72,44 @@ import { AppStateService } from '../app-state.service'; // Importa el servicio
   ],
 })
 export class AppComponent implements OnInit {
+  TipoAlerta = TipoAlerta;
+  tipoAlerta: TipoAlerta | null = null;
+
   // Propiedades para almacenar el título y el fondo
   helpBubbleExpanded = false;
   pageTitle: string = ''; // Título inicial
   backgroundClass: string = 'background-default'; // Clase de fondo inicial
   isLoading = false;
   isAlertActive;
+  StatusAlerta = StatusAlerta;
+  status: StatusAlerta | null = null;
+
   constructor(
     private readonly router: Router,
     private readonly menuCtrl: MenuController,
     private readonly appStateService: AppStateService, // Inyecta el servicio
+    private readonly botonService: BotonService,
   ) {
     this.isAlertActive = this.appStateService.getAlertStatus();
   }
   async ngOnInit() {
     await this.generateDeviceIdAndLocation();
+
+    this.tipoAlerta = this.appStateService.getTipoAlerta();
+    this.status = this.botonService.getStatusAlerta();
+
+    //ahora verifico el status cada 1.5 segundos
+    setInterval(async () => {
+      this.status = this.botonService.getStatusAlerta();
+    }, 500);
+
+    this.appStateService.tipoAlerta.subscribe((tipo) => {
+      this.tipoAlerta = tipo;
+    });
+    this.appStateService.statusAlerta.subscribe((status) => {
+      this.status = status;
+    });
+
     this.appStateService.currentTitle.subscribe((title) => {
       this.pageTitle = title;
     });
@@ -132,6 +157,13 @@ export class AppComponent implements OnInit {
       );
     } else {
       console.error('Geolocalización no es compatible con este navegador.');
+    }
+  }
+  goStatus() {
+    if (this.tipoAlerta !== null) {
+      this.router.navigate(['send-more-info']);
+    } else {
+      this.router.navigate(['selecciona']);
     }
   }
 }

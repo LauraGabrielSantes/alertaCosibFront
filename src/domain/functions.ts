@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { Lugares } from './tipo-alerta';
+import { Lugares } from './alerta';
 
 // Function to get location suggestions based on input using Fuse.js
 export async function getLuagares(inputWord: string, n: number) {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { BehaviorSubject } from 'rxjs';
-import { TipoAlerta } from './app/domain/tipo-alerta';
+import { Enviado, StatusAlerta, TipoAlerta } from 'src/domain/alerta';
 
 @Injectable({
   providedIn: 'root',
@@ -18,12 +18,18 @@ export class AppStateService {
   private readonly tipoAlertaSource = new BehaviorSubject<TipoAlerta | null>(
     null,
   );
+  private readonly enviadosSource = new BehaviorSubject<Enviado[]>([]);
+  private readonly statusAlertaSource =
+    new BehaviorSubject<StatusAlerta | null>(null);
+
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
   isLoading = this.isLoadingSource.asObservable();
   isActiveAlert = this.isActiveAlertSource.asObservable();
   isUam = this.isUamSource.asObservable();
   tipoAlerta = this.tipoAlertaSource.asObservable();
+  enviados = this.enviadosSource.asObservable();
+  statusAlerta = this.statusAlertaSource.asObservable();
   constructor() {
     const storedAlertStatus = localStorage.getItem('isActiveAlert');
     const initialAlertStatus =
@@ -69,6 +75,13 @@ export class AppStateService {
     this.isActiveAlertSource.next(false);
     this.setInUam(null);
     this.isUamSource.next(null);
+    this.tipoAlertaSource.next(null);
+    this.enviadosSource.next([]);
+    this.statusAlertaSource.next(null);
+    localStorage.removeItem('isUam');
+    localStorage.removeItem('tipoAlerta');
+    localStorage.removeItem('enviados');
+    localStorage.removeItem('statusAlerta');
     localStorage.setItem('isActiveAlert', 'false');
   }
   getAlertStatus(): boolean {
@@ -160,7 +173,7 @@ export class AppStateService {
     }
   }
 
-  setInUam(isUam: boolean | null) {
+  public setInUam(isUam: boolean | null) {
     this.isUamSource.next(isUam);
     if (isUam === null) {
       localStorage.removeItem('isUam');
@@ -169,7 +182,7 @@ export class AppStateService {
     }
   }
 
-  getIsUam(): boolean | PromiseLike<boolean | null> | null {
+  public getIsUam(): boolean | PromiseLike<boolean | null> | null {
     const isUam = localStorage.getItem('isUam');
     if (isUam === null) {
       this.isUamSource.next(null);
@@ -178,7 +191,7 @@ export class AppStateService {
     this.isUamSource.next(isUam === 'true');
     return isUam === 'true';
   }
-  guardarTipoAlerta(tipo: TipoAlerta | null) {
+  public guardarTipoAlerta(tipo: TipoAlerta | null) {
     this.tipoAlertaSource.next(tipo);
     if (tipo === null) {
       localStorage.removeItem('tipoAlerta');
@@ -186,7 +199,7 @@ export class AppStateService {
       localStorage.setItem('tipoAlerta', tipo);
     }
   }
-  getTipoAlerta(): TipoAlerta | null {
+  public getTipoAlerta(): TipoAlerta | null {
     const tipo = localStorage.getItem('tipoAlerta');
     if (tipo === null) {
       this.tipoAlertaSource.next(null);
@@ -194,5 +207,45 @@ export class AppStateService {
     }
     this.tipoAlertaSource.next(tipo as TipoAlerta);
     return tipo as TipoAlerta;
+  }
+
+  public saveEnviado(enviado: Enviado) {
+    let enviadosStr = localStorage.getItem('enviados');
+    let enviados: Enviado[];
+    if (enviadosStr) {
+      enviados = JSON.parse(enviadosStr);
+    } else {
+      enviados = [];
+    }
+    enviados.push(enviado);
+    localStorage.setItem('enviados', JSON.stringify(enviados));
+    this.enviadosSource.next(enviados);
+  }
+
+  public getEnviados(): Enviado[] {
+    if (this.enviadosSource.value.length > 0) {
+      return this.enviadosSource.value;
+    }
+    let enviadosStr = localStorage.getItem('enviados');
+    if (!enviadosStr) {
+      return [];
+    }
+    const enviados = JSON.parse(enviadosStr);
+    this.enviadosSource.next(enviados);
+    return enviados;
+  }
+
+  public saveStatusAlerta(status: StatusAlerta) {
+    this.statusAlertaSource.next(status);
+    localStorage.setItem('statusAlerta', status);
+  }
+  public getStatusAlerta(): StatusAlerta | null {
+    const status = localStorage.getItem('statusAlerta');
+    if (status === null) {
+      this.statusAlertaSource.next(null);
+      return null;
+    }
+    this.statusAlertaSource.next(status as StatusAlerta);
+    return status as StatusAlerta;
   }
 }

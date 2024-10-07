@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AppStateService } from 'src/app-state.service';
-import { TipoAlerta } from 'src/app/domain/tipo-alerta';
+import {
+  Enviado,
+  EnviarTipo,
+  StatusAlerta,
+  TipoAlerta,
+} from 'src/domain/alerta';
+import { AppStateService } from './app-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +32,6 @@ export class BotonService {
   }
 
   async checarComunicacion(): Promise<boolean> {
-    console.log('Checar Comunicación');
     return true;
   }
   seleccionarTipoAlerta(tipo: TipoAlerta) {
@@ -39,22 +43,56 @@ export class BotonService {
 
   async sendFoto(blobFoto: Blob) {
     this.appStateService.startLoading();
-    //espero 1 segundo
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    const fotoBase64 = await this.blobToBase64(blobFoto);
+    const enviado: Enviado = {
+      tipo: EnviarTipo.FOTOGRAFIA,
+      foto: fotoBase64,
+    };
+    this.appStateService.saveEnviado(enviado);
     this.appStateService.stopLoading();
   }
-  async sendUbicacion(selectedLugar: string, ubicacionEspecifica: string) {
+
+  async sendUbicacion(selectedLugar: string, ubicacionEspecificacion: string) {
     this.appStateService.startLoading();
-    console.log('Ubicación: ', selectedLugar, ubicacionEspecifica);
+    console.log('Ubicación: ', selectedLugar, ubicacionEspecificacion);
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    const enviado: Enviado = {
+      tipo: EnviarTipo.UBICACION,
+      lugar: selectedLugar,
+      ubicacionEspecificacion: ubicacionEspecificacion,
+    };
+    this.appStateService.saveEnviado(enviado);
+
     this.appStateService.stopLoading();
     this.router.navigate(['/send-more-info']);
   }
   async sendMasInfo(textoMasInfo: string) {
     this.appStateService.startLoading();
     console.log('Más información: ', textoMasInfo);
+    const enviado: Enviado = {
+      tipo: EnviarTipo.MAS_INFORMACION,
+      informacion: textoMasInfo,
+    };
+    this.appStateService.saveEnviado(enviado);
+
     await new Promise((resolve) => setTimeout(resolve, 1000));
     this.appStateService.stopLoading();
     this.router.navigate(['/send-more-info']);
+  }
+
+  async blobToBase64(blobFoto: Blob): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blobFoto);
+    });
+  }
+  getStatusAlerta(): StatusAlerta | null {
+    this.appStateService.saveStatusAlerta(StatusAlerta.ACTIVA);
+    return StatusAlerta.ACTIVA;
   }
 }

@@ -15,7 +15,12 @@
 
     @if(isAlertActive){
     <div class="help-bubble " [class.expanded]="helpBubbleExpanded" (click)="showHelp()" (keydown)="showHelp()">
-      <span class="icon-globo-flotante-2"></span> @if (helpBubbleExpanded) { Status : activo}
+      <span class="icon-globo-flotante-2"></span>
+      @if (helpBubbleExpanded) {
+      <div>Estatus: {{status??"No definido"}}
+      </div>
+      <div (click)="goStatus()" (keydown)="goStatus()" class="icon-opción">Ir</div>
+      }
     </div>
     }
   </ion-content>

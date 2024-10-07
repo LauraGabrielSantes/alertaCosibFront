@@ -8,10 +8,15 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { AppStateService } from 'src/app-state.service';
+import { AppStateService } from 'src/services/app-state.service';
 import { BotonService } from 'src/services/boton.service';
-import { getLuagares } from '../domain/functions'; // Import your fuzzy search function
-import { EnviarTipo, Lugares, TipoAlerta } from '../domain/tipo-alerta';
+import {
+  EnviarTipo,
+  Lugares,
+  StatusAlerta,
+  TipoAlerta,
+} from '../../domain/alerta';
+import { getLuagares } from '../../domain/functions'; // Import your fuzzy search function
 
 @Component({
   selector: 'app-send-more-info',
@@ -46,12 +51,15 @@ export class SendMoreInfoPage {
   tipoAlerta: TipoAlerta | null = null;
   private blobFoto: Blob | undefined;
   Lugares = Lugares;
-
+  status: StatusAlerta | null = null;
   ionViewWillEnter() {
     this.tipoAlerta = this.appStateService.getTipoAlerta();
-    this.enviarMasInfoTipo = null;
+    this.status = this.appStateService.getStatusAlerta();
     this.appStateService.tipoAlerta.subscribe((tipo) => {
       this.tipoAlerta = tipo;
+    });
+    this.appStateService.statusAlerta.subscribe((status) => {
+      this.status = status;
     });
     this.setTitulo();
     this.appStateService.changeBackgroundGris();
@@ -98,24 +106,20 @@ export class SendMoreInfoPage {
     this.selectedLugar = null; // Reset selected location
   }
 
-  // Method to handle input change and update suggestions
   onInputChange(event: Event) {
     const input = (event.target as HTMLInputElement).value;
     this.getSuggestions(input); // This function should populate this.suggestions
   }
 
   async getSuggestions(input: string) {
-    // Assuming getLuagares is an asynchronous function that returns an array of string suggestions
     this.suggestions = await getLuagares(input, 5); // Example: getting top 5 suggestions
   }
 
-  // Method to select a suggestion
   selectSuggestion(suggestion: string) {
     this.selectedLugar = suggestion; // Update the selectedLugar with the selected suggestion
     this.suggestions = []; // Clear suggestions after selection
   }
 
-  // Example function to handle the change in combo box (optional)
   onLugarChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     this.selectedLugar = selectElement.value; // Update selectedLugar on select change
@@ -128,7 +132,6 @@ export class SendMoreInfoPage {
     this.blobFoto = undefined;
     this.enviarMasInfoTipo = null;
   }
-  // Send location (to be called on submit)
   async enviarUbicacion() {
     if (this.selectedLugar) {
       await this.botonService.sendUbicacion(

@@ -7,8 +7,7 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
-import { AppStateService } from 'src/app-state.service';
-
+import { AppStateService } from 'src/services/app-state.service';
 @Component({
   selector: 'app-servicios',
   templateUrl: './servicios.page.html',

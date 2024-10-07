@@ -270,12 +270,17 @@ ion-buttons {
     font-size: 1rem;
     border-radius: 2.5rem;
     align-items: left;
-    justify-content: left;
+    justify-content: space-evenly;
   }
 
   .icon-globo-flotante-2 {
     color: var(--ion-color-danger);
 
     font-size: 4rem;
+  }
+  .icon-opción {
+    font-size: 1.2rem;
+    text-align: right;
+    margin-right: 1rem;
   }
 }
