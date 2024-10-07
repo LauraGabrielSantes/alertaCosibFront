@@ -1,4 +1,3 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Device } from '@capacitor/device';
 
@@ -38,18 +37,7 @@ import { AppStateService } from '../app-state.service'; // Importa el servicio
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  animations: [
-    trigger('routerTransition', [
-      transition(':enter', [
-        style({ transform: 'translateX(100%)', display: 'block !important' }),
-        animate('0.5s ease-in-out', style({ transform: 'translateX(0%)' })),
-      ]),
-      transition(':leave', [
-        style({ transform: 'translateX(0%)', display: 'block !important' }),
-        animate('0.5s ease-in-out', style({ transform: 'translateX(-100%)' })),
-      ]),
-    ]),
-  ],
+
   imports: [
     RouterLink,
     RouterLinkActive,

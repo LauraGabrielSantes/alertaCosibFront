@@ -62,7 +62,10 @@
   --ion-color-dark-shade: #292929;
   --ion-color-dark-tint: #444444;
 }
-
+body,
+ion-app {
+  overflow-y: scroll; /* Establece el alto mínimo de la aplicación */
+}
 .boton-inferior {
   position: absolute;
   bottom: 50px; /* Adjust as needed */
@@ -73,12 +76,12 @@
 }
 .boton {
   font-size: 0.6 rem;
-  border-radius: 6px;
+  border-radius: 12px;
   font-weight: bold;
   padding: 8px 10px;
   color: rgb(255, 255, 255);
   background-color: transparent;
   --background: none;
   //borde solido de 1 px blanco
-  border: 1px solid rgb(255, 255, 255);
+  border: 2px solid rgb(255, 255, 255);
 }

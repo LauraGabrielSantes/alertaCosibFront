@@ -1,3 +1,35 @@
+<div class="alerta-info">
+  <div class="alerta-titulo">Tipo de alerta</div>
+  <div>Tu alerta ha sido enviada, si puedes selecciona el tipo de alerta</div>
+
+  <div class="button-container">
+    <div class="button" (click)="seleccionar('Medica')" (keypress)="seleccionar('Medica')">
+      <div class="icon">
+        <img src="assets/icon/SVG/Salud.svg" alt="Medica">
+      </div>
+      <div class="text">Medica</div>
+    </div>
+    <div class="button" (click)="seleccionar('Seguridad')" (keypress)="seleccionar('Medica')">
+      <div class="icon">
+        <img src="assets/icon/SVG/Seguridad.svg" alt="Seguridad">
+      </div>
+      <div class="text">Seguridad</div>
+    </div>
+    <div class="button" (click)="seleccionar('Violencia de género')" (keypress)="seleccionar('Medica')">
+      <div class="icon">
+        <img src="assets/icon/SVG/violencia.svg" alt="violencia">
+      </div>
+      <div class="text">Violencia de género </div>
+    </div>
+    <div class="button" (click)="seleccionar('Otra')" (keypress)="seleccionar('Medica')">
+      <div class="icon">
+        <img src="assets/icon/SVG/Otras.svg" alt="otra">
+      </div>
+      <div class="text">Otra</div>
+    </div>
+  </div>
+
+</div>
 <div class="boton-inferior">
   <button class="boton" (click)="cancelar()">Cancelar Alerta</button>
 </div>

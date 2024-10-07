@@ -1,0 +1,60 @@
+.alerta-info {
+  color: black;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.alerta-titulo {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  padding-top: 1rem;
+  font-weight: bold;
+  padding-bottom: 1rem;
+}
+
+.button-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0px; /* Ajusta el espacio entre los botones */
+  box-sizing: border-box;
+  justify-items: center; /* Centra los elementos horizontalmente */
+  align-items: center; /* Centra los elementos verticalmente */
+}
+
+.button {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; /* Dispone los elementos en una columna */
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  transition: transform 0.2s;
+  aspect-ratio: 1 / 1;
+  max-height: 200px; /* Ajusta el alto máximo según tus necesidades */
+  width: 100%; /* Asegura que el ancho se ajuste al contenedor */
+  max-width: 200px; /* Ajusta el ancho máximo según tus necesidades */
+}
+.button:hover {
+  transform: scale(1.1);
+}
+
+.icon span {
+  font-size: 5rem;
+  color: var(--ion-color-danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+.text {
+  margin-top: 10px;
+  color: black;
+  font-size: 15px;
+  font-weight: bold;
+}

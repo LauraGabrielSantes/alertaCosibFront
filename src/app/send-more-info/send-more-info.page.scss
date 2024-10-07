@@ -1,0 +1,206 @@
+.contenido {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 10rem;
+  text-align: center;
+  padding: 20px;
+}
+
+.titulo-enviar {
+  font-size: 1.5rem; // Increased size for visibility
+  font-weight: bold;
+  margin: 1rem 0; // Uniform margin for spacing
+  text-align: center;
+  color: #333; // Darker text for readability
+}
+
+.alerta-enviada {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.3rem;
+  color: black;
+  font-weight: bold;
+}
+
+.status-cuadro {
+  border-radius: 1rem;
+  border: 2px solid #ebf0f2;
+  padding: 1rem;
+  background-color: var(--ion-color-secondary);
+  color: #ccc;
+  font-weight: bold;
+  margin: 20px 0; // Added margin for spacing
+  margin-bottom: 0px;
+  .estado {
+    color: red;
+  }
+}
+
+.mensaje {
+  margin: auto;
+  font-size: 1rem;
+  margin-top: 30px;
+  max-width: 20rem;
+  text-align: center;
+}
+
+// Button styles
+.botones-torre {
+  cursor: pointer;
+  user-select: none;
+  display: flex; // Use flexbox for layout
+  flex-direction: column; // Stack buttons vertically
+  align-items: center; // Center horizontally
+
+  .boton {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    height: 3.3rem;
+    width: 100%; // Full width
+    display: flex; // Use flexbox
+    align-items: center; // Center vertically
+    justify-content: left; // Center horizontally
+    border-radius: 0.5rem; // Rounded corners
+    color: white; // White text color
+    transition: background-color 0.2s; // Smooth transition for hover effect
+    border: 3px solid #ebf0f2; // Light border
+    .icon {
+      display: flex; // Use flexbox for icon layout
+      justify-content: center; // Center horizontally
+      align-items: center; // Center vertically
+      font-size: 2rem;
+      margin-right: 0.5rem; // Space between icon and text
+      color: var(--ion-color-secondary-tint);
+    }
+    .icon-cámara {
+      font-size: 1.6rem;
+      margin-right: 1rem;
+    }
+
+    &:hover {
+      background-color: var(--ion-color-secondary-tint); // Darken on hover
+      .icon {
+        color: white; // Change icon color on hover
+      }
+    }
+  }
+}
+.botones-acciones {
+  display: flex;
+  flex-direction: column; // Cambia la dirección del flex a columna
+  align-items: center; // Centra los botones horizontalmente
+  margin-top: 20px; // Espacio arriba de los botones
+
+  .boton {
+    color: white;
+    border-radius: 1rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin: 10px 0; // Margen vertical entre los botones
+    padding: 5px 10px; // Padding para los botones
+    text-align: center; // Centra el texto
+    width: 10rem; // Ancho completo
+    &.enviar {
+      border-color: var(
+        --ion-color-secondary-tint
+      ); // Color diferente para el botón de enviar
+      background-color: var(
+        --ion-color-secondary-tint
+      ); // Color diferente para el botón de enviar
+    }
+
+    &:hover {
+      background-color: var(
+        --ion-color-secondary-tint
+      ); // Oscurece al pasar el ratón
+    }
+  }
+}
+
+// Input and TextArea styles
+.ubicacion-input,
+.lugar-select,
+.ubicacion-especifica {
+  width: 18rem; // Consistent width
+  padding: 10px;
+  border: 1px solid #ebf0f2; // Light border
+
+  border-radius: 4px; // Rounded corners
+  font-size: 1em;
+  margin: 10px 0; // Space above and below inputs
+  text-align: center; // Center text
+  transition: border-color 0.3s;
+  background-color: transparent;
+  &:focus {
+    border-color: #007bff; // Change border color on focus
+    outline: none; // Remove default outline
+  }
+}
+
+.suggestions-list {
+  list-style-type: none; // Remove bullets
+  padding: 0;
+  margin: 0;
+  max-height: 150px; // Limit height of suggestions list
+  overflow-y: auto; // Add scrollbar if needed
+  border: 1px solid #ccc; // Light border around the list
+  border-radius: 4px; // Rounded corners
+}
+
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer; // Pointer cursor on hover
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(
+      --ion-color-secondary-tint
+    ); // Change background on hover
+    color: white; // Change text color on hover
+  }
+}
+
+// Image styles
+.foto-tomada {
+  width: 100%;
+  max-width: 80%;
+  margin: auto;
+
+  img {
+    width: 100%; // Full width for images
+    height: auto; // Maintain aspect ratio
+    max-height: 20rem;
+    object-fit: contain; // Ensure image doesn't stretch
+  }
+}
+
+// Specific input area styles
+.ubicacion-especifica {
+  padding: 0;
+  margin: 10px 0; // Margin for spacing
+  border: 2px solid #ccc; // Border
+
+  border-radius: 2rem; // Rounded corners
+  text-align: center; // Center text
+  background-color: transparent; // Transparent background
+}
+
+.texto-mas-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column; // Cambia la dirección del flex a columna
+  align-items: center; // Centra los botones horizontalmente
+  margin-top: 20px; // Espacio arriba de los botones
+  width: 100%; // Ancho completo
+  .text-area {
+    width: 90%;
+    height: 25rem; // Increased height
+    border-radius: 1rem; // Rounded corners
+    background-color: transparent;
+    border: 3px solid #ebf0f2; // Light border
+    padding: 10px; // Padding for text area
+  }
+}
