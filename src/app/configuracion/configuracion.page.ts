@@ -6,6 +6,10 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
+  IonItem,
+  IonList,
+  IonInput,
+  IonText,
 } from '@ionic/angular/standalone';
 import { AppStateService } from 'src/app-state.service';
 
@@ -21,6 +25,10 @@ import { AppStateService } from 'src/app-state.service';
     IonToolbar,
     CommonModule,
     FormsModule,
+    IonItem,
+    IonList,
+    IonInput,
+    IonText,
   ],
 })
 export class ConfiguracionPage {
@@ -31,4 +39,7 @@ export class ConfiguracionPage {
     this.appStateService.changeTitle('Configuración');
     this.appStateService.defaultBackground();
   }
+
+ 
+
 }
