@@ -1,27 +1,26 @@
-<ion-split-pane>
-  <ion-app [ngClass]="backgroundClass">
-    <div class="cabecera-logos">
-      <img src="assets/logos/uam.svg" alt="UAM Logo" class="logo">
-      <img src="assets/logos/cosib.svg" alt="Cosib Logo" class="logo">
-      <img src="assets/logos/CosibNegro.svg" alt="Cosib Negro Logo" class="logo">
+<ion-app [ngClass]="backgroundClass">
+  <div class="cabecera-logos">
+    <img src="assets/logos/uam.svg" alt="UAM Logo" class="logo">
+    <img src="assets/logos/cosib.svg" alt="Cosib Logo" class="logo">
+    <img src="assets/logos/CosibNegro.svg" alt="Cosib Negro Logo" class="logo">
+  </div>
+
+
+  <ion-content id="main-content">
+    <div class="cabecera-menu-content">
+      <span (click)="openMenu()" (keydown)="openMenu()" class="icono-menu-content icon-menu-9"></span>
+      <h1> {{pageTitle}}</h1>
     </div>
+    <ion-router-outlet class="principal" [animated]="false"></ion-router-outlet>
 
+    @if(isAlertActive){
+    <div class="help-bubble " [class.expanded]="helpBubbleExpanded" (click)="showHelp()" (keydown)="showHelp()">
+      <span class="icon-globo-flotante-2"></span> @if (helpBubbleExpanded) { Status : activo}
+    </div>
+    }
+  </ion-content>
+</ion-app>
 
-    <ion-content id="main-content">
-      <div class="cabecera-menu-content">
-        <span (click)="openMenu()" (keydown)="openMenu()" class="icono-menu-content icon-menu-9"></span>
-        <h1> {{pageTitle}}</h1>
-      </div>
-      <ion-router-outlet class="principal" [animated]="true"></ion-router-outlet>
-
-      @if(isAlertActive){
-      <div class="help-bubble " [class.expanded]="helpBubbleExpanded" (click)="showHelp()">
-        <span class="icon-globo-flotante-2"></span> @if (helpBubbleExpanded) { Status : activo}
-      </div>
-      }
-    </ion-content>
-  </ion-app>
-</ion-split-pane>
 <ion-menu menuId="main-menu" auto-hide="true" contentId="main-content">
   <ion-content class="principal-menu-contenido">
     <div class="cabecera-menu">

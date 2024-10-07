@@ -1,3 +1,9 @@
+#main-content {
+  min-height: 500px;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}
+
 ion-menu {
   margin-top: 6rem;
   --background: none;
@@ -191,7 +197,7 @@ ion-menu::part(container) {
         rgba(139, 151, 171, 0)
       ),
       var(--ion-color-success) no-repeat center 60% / auto 140%
-        url("../assets/texturas/png/Fondo-gris-oscuro.png");
+        url("../assets/texturas/png/Fondo-gris-claro.png");
     color: var(--ion-color-tertiary);
     --ion-text-color: var(--ion-color-tertiary);
   }

@@ -25,6 +25,14 @@ export const routes: Routes = [
   },
   {
     path: 'selecciona',
-    loadComponent: () => import('./selecciona/selecciona.page').then( m => m.SeleccionaPage)
+    loadComponent: () =>
+      import('./selecciona/selecciona.page').then((m) => m.SeleccionaPage),
+  },
+  {
+    path: 'send-more-info',
+    loadComponent: () =>
+      import('./send-more-info/send-more-info.page').then(
+        (m) => m.SendMoreInfoPage,
+      ),
   },
 ];

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { BehaviorSubject } from 'rxjs';
+import { TipoAlerta } from './app/domain/tipo-alerta';
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +15,15 @@ export class AppStateService {
   private readonly isActiveAlertSource: BehaviorSubject<boolean | null> =
     new BehaviorSubject<boolean | null>(null);
   private readonly isUamSource = new BehaviorSubject<boolean | null>(null);
+  private readonly tipoAlertaSource = new BehaviorSubject<TipoAlerta | null>(
+    null,
+  );
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
   isLoading = this.isLoadingSource.asObservable();
   isActiveAlert = this.isActiveAlertSource.asObservable();
   isUam = this.isUamSource.asObservable();
+  tipoAlerta = this.tipoAlertaSource.asObservable();
   constructor() {
     const storedAlertStatus = localStorage.getItem('isActiveAlert');
     const initialAlertStatus =
@@ -172,5 +177,22 @@ export class AppStateService {
     }
     this.isUamSource.next(isUam === 'true');
     return isUam === 'true';
+  }
+  guardarTipoAlerta(tipo: TipoAlerta | null) {
+    this.tipoAlertaSource.next(tipo);
+    if (tipo === null) {
+      localStorage.removeItem('tipoAlerta');
+    } else {
+      localStorage.setItem('tipoAlerta', tipo);
+    }
+  }
+  getTipoAlerta(): TipoAlerta | null {
+    const tipo = localStorage.getItem('tipoAlerta');
+    if (tipo === null) {
+      this.tipoAlertaSource.next(null);
+      return null;
+    }
+    this.tipoAlertaSource.next(tipo as TipoAlerta);
+    return tipo as TipoAlerta;
   }
 }

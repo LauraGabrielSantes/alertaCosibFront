@@ -1,0 +1,103 @@
+@switch(enviarMasInfoTipo){
+@case(null){
+<div>
+  <div class="alerta-enviada">
+    <p class="centrado">Tu alerta ha sido enviada.<br>Si tienes más información, intégrala.</p>
+  </div>
+  <div class="status-cuadro">
+    <div>Status de Alerta: <span class="estado">Enviado</span></div>
+    <div>Hora enviada: <span class="estado">432:32</span></div>
+    <div>Informacion enviada: <span class="estado"> 2 mensajes</span> </div>
+  </div>
+
+  <div class="botones-torre">
+    <div class="boton" (click)="tomarFotografia()" (keydown)="tomarFotografia()"><span class="icon icon-cámara">
+      </span> Tomar
+      Fotografía</div>
+    <div class="boton" (click)="especificarUbicacion()" (keydown)="especificarUbicacion()"><span
+        class="icon icon-ubicación">
+      </span>Especificar Ubicación</div>
+    <div class="boton" (click)="agregarMasInformacion()" (keydown)="agregarMasInformacion()"><span
+        class="icon icon-más-información"> </span>
+      Enviar Más Información</div>
+  </div>
+  <div class="mensaje">
+    Con tu ayuda podemos mejorar nuestra atención.
+  </div>
+</div>
+
+<div class="boton-inferior">
+  <button class="boton" (click)="cancelar()">Cancelar Alerta</button>
+</div>
+}
+@case (EnviarTipo.FOTOGRAFIA) {
+<div class="Contenido">
+  <div class="titulo-enviar">
+    <p>Enviar Fotografía</p>
+  </div>
+  <div class="foto-tomada" *ngIf="fotoUrl">
+    <img [src]="fotoUrl" alt="Tomada" />
+    <div class="botones-acciones">
+      <div class="boton enviar" (click)="enviarFoto()" (keydown)="enviarFoto()">
+        Enviar
+      </div>
+      <div class="boton" (click)="cancelarEnvio()" (keydown)="cancelarEnvio()">
+        cancelar
+      </div>
+    </div>
+
+  </div>
+</div>
+}
+@case (EnviarTipo.UBICACION) {
+<div class="contenido">
+  <div class="titulo-enviar">Por favor, especifica tu ubicación en la UAM Iztapalapa.</div>
+  <div class="opciones">
+    <input type="text" id="ubicacionInput" (input)="onInputChange($event)" placeholder="Escribe tu ubicación..."
+      class="ubicacion-input" />
+    <div>selecciona la ubicación mas cercana</div>
+    <ul id="suggestionsList" class="suggestions-list" *ngIf="suggestions.length > 0">
+      <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)" class="suggestion-item">{{
+        suggestion }}</li>
+    </ul>
+    <select [(ngModel)]="selectedLugar" (change)="onLugarChange($event)" class="lugar-select">
+      <option value="" disabled selected>Selecciona un lugar</option>
+      <option *ngFor="let lugar of Lugares" [value]="lugar">{{ lugar }}</option>
+    </select>
+    <div class="texto-especifica">
+      <p>Si puedes agrega mas informacion de tu hubicacion ejemplo: piso 2</p>
+      <textarea [(ngModel)]="ubicacionEspecifica" class="ubicacion-especifica"
+        placeholder="Escribe tu ubicación..."></textarea>
+    </div>
+    <div class="botones-acciones">
+      <div class="boton enviar" (click)="enviarUbicacion()">Enviar</div>
+      <div class="boton cancelar" (click)="cancelarEnvio()" (keydown)="cancelarEnvio()">Cancelar</div>
+    </div>
+  </div>
+
+</div>
+
+}
+@case (EnviarTipo.MAS_INFORMACION) {
+
+<div class="Contenido">
+  <div class="titulo-enviar">
+    Enviar más información
+  </div>
+  <div class="texto-mas-info">
+
+    <textarea [(ngModel)]="textoMasInfo" class="text-area"
+      placeholder="Ingresa una descripcion del acontecimiento."></textarea>
+
+  </div>
+  <div class="botones-acciones">
+    <div class="boton enviar" (click)="enviarMasInfo()" (keydown)="enviarMasInfo()">
+      Enviar
+    </div>
+    <div class="boton" (click)="cancelarEnvio()" (keydown)="cancelarEnvio()">
+      cancelar
+    </div>
+  </div>
+</div>
+}
+}
