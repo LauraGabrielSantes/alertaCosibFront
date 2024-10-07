@@ -1,0 +1,57 @@
+.configuracion {
+
+    font-size: 4rem;
+    margin-top: 4rem;
+    font-weight: bold;
+    
+}
+
+.info-Usuario {
+    margin-top: 3rem;
+}
+
+
+.seccion-preguntas {
+    padding-top: 1rem;
+    
+}
+
+.pregunta {
+    padding-top: 1rem;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.input {
+    border: none;
+    border-bottom: 2px solid #8B97AB;
+    background-color: rgba(231, 234, 237, 0.012);
+    padding-top: 1rem;
+    outline: none;
+    width: 100%;
+    font-weight: normal;
+}
+.btn-inferior{
+    position: absolute;
+    bottom: 50px; /* Adjust as needed */
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    
+    
+  }
+  .btn-guardar{
+    font-size: 1 rem;
+    border-radius: 6px;
+    font-weight: bold;
+    padding: 8px 10px;
+    color: #8B97AB;
+    background-color: transparent;
+    --background: none;
+    border: 1.5px solid #8B97AB;
+  }
+  .padrebtn{
+   padding-top: 150px;
+    position: relative;
+  }
