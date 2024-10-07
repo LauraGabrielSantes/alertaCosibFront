@@ -1,0 +1,46 @@
+.subtitulo{
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.opciones-servicios{
+    //position: absolute;
+}
+.opcion {
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 3px;
+   width: 100%;
+    border: 2px solid #A8B1C0 ;
+    margin-top: 20px;
+    border-radius: 15px;
+    
+  }
+
+  .icono-menu {
+    height: 3rem;
+    margin-right: 1rem; /* Optional: Adds space between the icon and text */
+    padding: 0.5rem;
+  }
+
+  .text-opcion{
+    color:#2B2D42;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+
+  .opcion:hover{
+    background-color:#2B2D42 ;
+    border: 2px solid #2B2D42 ;
+    .text-opcion{
+        color:#fcfcfc;
+        
+    }
+   
+  }
+
+
+  
