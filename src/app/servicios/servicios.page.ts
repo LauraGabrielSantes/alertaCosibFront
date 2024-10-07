@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonContent,
   IonHeader,
@@ -25,10 +26,25 @@ import { AppStateService } from 'src/services/app-state.service';
 export class ServiciosPage {
   constructor(
     private readonly appStateService: AppStateService, // Inyecta el servicio
+    private readonly router: Router,
   ) {}
-
+  opcionActiva=false;
   ionViewWillEnter() {
     this.appStateService.changeTitle('Servicios');
     this.appStateService.defaultBackground();
   }
+  async navigateTo(page: string) {
+    await this.router.navigate([`/${page}`]);
+    
+  }
+
+
+  goTelefono (numero:String){
+   let telefono='tel:'+numero;
+    window.location.href=telefono;
+  }
+  
+  
+ 
+  
 }
