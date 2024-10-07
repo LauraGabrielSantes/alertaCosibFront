@@ -42,6 +42,7 @@ export class SendMoreInfoPage {
   ubicacionEspecifica: string = '';
   textoMasInfo: string = '';
   numeroDeMensajes: number = 0;
+  horaAlerta: string = '';
   constructor(
     private readonly appStateService: AppStateService,
     private readonly botonService: BotonService,
@@ -56,6 +57,7 @@ export class SendMoreInfoPage {
   status: StatusAlerta | null = null;
   isActiveAlert: boolean = true;
   ionViewWillEnter() {
+    this.horaAlerta = this.appStateService.getHoraAlerta();
     this.isActiveAlert = this.appStateService.getIsActiveAlert();
     if (!this.isActiveAlert) {
       this.router.navigate(['']);

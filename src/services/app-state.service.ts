@@ -261,4 +261,10 @@ export class AppStateService {
   public getMessageModal(): MessageModal | null {
     return this.MessageModalSource.value;
   }
+  public saveHoraAlerta(hora: string) {
+    localStorage.setItem('horaAlerta', hora.toString());
+  }
+  public getHoraAlerta(): string {
+    return localStorage.getItem('horaAlerta') ?? '';
+  }
 }

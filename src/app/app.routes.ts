@@ -35,4 +35,8 @@ export const routes: Routes = [
         (m) => m.SendMoreInfoPage,
       ),
   },
+  {
+    path: 'legal',
+    loadComponent: () => import('./legal/legal.page').then( m => m.LegalPage)
+  },
 ];
