@@ -21,23 +21,33 @@
   }
 
   .icono-menu {
-    height: 3rem;
-    margin-right: 1rem; /* Optional: Adds space between the icon and text */
+   
+    margin-right: 1rem; 
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
     padding: 0.5rem;
+    color: #2B2D42;
+    font-size: 1.4rem;
   }
 
   .text-opcion{
     color:#2B2D42;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.2rem;
+  }
+  .sin-subrayado{
+    text-decoration: none;
+    
   }
 
   .opcion:hover{
     background-color:#2B2D42 ;
     border: 2px solid #2B2D42 ;
     .text-opcion{
-        color:#fcfcfc;
-        
+        color:#EBF0F2;     
+    }
+    .icono-menu{
+        color: #EBF0F2;
     }
    
   }

@@ -2,17 +2,26 @@
     <div class="subtitulo">Servicios a tu disposición</div>
 
 <div class="opciones-servicios">
-    <div class="opcion" [class.opcion-activa]="opcionActiva==true" (click)="navigateTo('')">
+    <div class="opcion"  (click)="navigateTo('')">
         <span  alt="boton" class="icon-opción icono-menu"></span>
-        <div class="text-opcion" [class.opcion-activa.text-opcion]="opcionActiva==true">Opción 1</div>
+        <div class="text-opcion">Opción 1</div>
     </div>
-    <div class="opcion" (click)="navigateTo('')">
-        <img src="assets/icon/SVG/servicios-boton-menu.svg" alt="Servicios" class="icono-menu">
+    <div class="opcion"  (click)="navigateTo('')">
+        <span  alt="boton" class="icon-opción icono-menu"></span>
+        <div class="text-opcion">Opción 2</div>
+    </div>
+    <div class="opcion"  (click)="navigateTo('')">
+        <span  alt="boton" class="icon-opción icono-menu"></span>
+        <div class="text-opcion">Opción 3</div>
+    </div>
+    <div class="opcion" (click)="goTelefono('5558044864')">
+        <span alt="Servicios" class="icon-llamada icono-menu"></span>
         <div class="text-opcion">Vigilancia </div>
     </div>
-    <div class="opcion" (click)="navigateTo('')">
-        <img src="assets/icon/SVG/configuracion-boton-menu.svg" alt="Configuracion" class="icono-menu">
-        <div class="text-opcion">Protección </div>
+    <div class="opcion" (click)="goTelefono('5558046546')">
+        <span alt="Configuracion" class="icon-llamada icono-menu"> </span>
+        <div class="text-opcion">Protección civil</div>
     </div>
+    
 </div>
 </div>

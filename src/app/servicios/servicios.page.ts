@@ -35,9 +35,14 @@ export class ServiciosPage {
     this.appStateService.defaultBackground();
   }
   async navigateTo(page: string) {
-    this.opcionActiva=true;
     await this.router.navigate([`/${page}`]);
     
+  }
+
+
+  goTelefono (numero:String){
+   let telefono='tel:'+numero;
+    window.location.href=telefono;
   }
   
   
