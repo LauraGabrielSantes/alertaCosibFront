@@ -81,6 +81,10 @@
             },
             "ci": {
               "progress": false
+            },
+            "options": {
+              "sslCert": "./ssl/cert.crt",
+              "sslKey": "./ssl/cert.key"
             }
           },
           "defaultConfiguration": "development"
@@ -126,9 +130,7 @@
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@ionic/angular-toolkit"
-    ],
+    "schematicCollections": ["@ionic/angular-toolkit"],
     "analytics": "19f3f366-b636-4fbf-a011-a4bb2c74bbc9"
   },
   "schematics": {
