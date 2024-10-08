@@ -19,6 +19,8 @@ import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
 import { AppStateService } from './services/app-state.service';
+import { isDevMode } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 // Call the element loader before the bootstrapModule/bootstrapApplication call
 navigator.serviceWorker.register('./assets/sw.js');
 defineCustomElements(window);
@@ -32,6 +34,9 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withHashLocation()),
     provideHttpClient(),
     { provide: BASE_PATH, useValue: environment.apiUrl },
-    provideNoopAnimations(),
+    provideNoopAnimations(), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 });

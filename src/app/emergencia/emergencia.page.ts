@@ -54,8 +54,8 @@ export class EmergenciaPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
     this.alartaStatus = this.appStateService.getStatusAlerta() !== null;
-
-    if (this.alartaStatus) {
+    const alertaActiva = this.appStateService.getIsActiveAlert();
+    if (this.alartaStatus && alertaActiva) {
       this.router.navigate(['/send-more-info']);
     }
     this.updateScreen();

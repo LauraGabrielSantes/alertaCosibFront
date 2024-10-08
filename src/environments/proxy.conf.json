@@ -1,0 +1,7 @@
+{
+  "/services/general/v1": {
+    "target": "https://tezcatl.uam.mx",
+    "secure": false,
+    "changeOrigin": false
+  }
+}

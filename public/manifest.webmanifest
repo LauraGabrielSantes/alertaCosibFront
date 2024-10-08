@@ -1,0 +1,17 @@
+{
+  "name": "Alerta cosib",
+  "short_name": "Alerta cosib",
+  "theme_color": "#BAC1CD",
+  "background_color": "#BAC1CD",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "icono.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

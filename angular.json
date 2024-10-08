@@ -32,7 +32,9 @@
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "ngsw-config.json"
           },
           "configurations": {
             "production": {
@@ -83,6 +85,7 @@
               "progress": false
             },
             "options": {
+              "proxyConfig": "src/environments/proxy.conf.json",
               "sslCert": "./ssl/cert.crt",
               "sslKey": "./ssl/cert.key"
             }
