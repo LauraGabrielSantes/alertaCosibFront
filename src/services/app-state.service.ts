@@ -267,4 +267,10 @@ export class AppStateService {
   public getHoraAlerta(): string {
     return localStorage.getItem('horaAlerta') ?? '';
   }
+  public getBearerToken(): string | null {
+    return localStorage.getItem('bearerToken');
+  }
+  public saveBearerToken(token: string) {
+    localStorage.setItem('bearerToken', token);
+  }
 }

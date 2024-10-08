@@ -11,16 +11,17 @@ import {
   provideIonicAngular,
 } from '@ionic/angular/standalone';
 
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
+import { isDevMode } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideServiceWorker } from '@angular/service-worker';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { BASE_PATH } from './api/generated';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
+import { HeaderService } from './services/apiHeaders.service';
 import { AppStateService } from './services/app-state.service';
-import { isDevMode } from '@angular/core';
-import { provideServiceWorker } from '@angular/service-worker';
 // Call the element loader before the bootstrapModule/bootstrapApplication call
 navigator.serviceWorker.register('./assets/sw.js');
 defineCustomElements(window);
@@ -32,11 +33,13 @@ bootstrapApplication(AppComponent, {
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideRouter(routes, withHashLocation()),
+    { provide: HTTP_INTERCEPTORS, useClass: HeaderService, multi: true },
     provideHttpClient(),
     { provide: BASE_PATH, useValue: environment.apiUrl },
-    provideNoopAnimations(), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
+    provideNoopAnimations(),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 });
