@@ -140,7 +140,7 @@ export class AppComponent implements OnInit {
           this.appStateService.sendMessageModal({
             title: 'Alerta rechazada',
             message:
-              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda.',
+              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda                .',
           });
         }
 

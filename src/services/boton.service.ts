@@ -52,6 +52,7 @@ export class BotonService {
     const ubicacion: EnviarAlertaPostRequestLocalizacion = {
       accuracy: localizacion.accuracy,
       longitude: localizacion.longitude,
+      latitude: localizacion.latitude,
       altitude: localizacion.altitude ?? undefined,
       altitudeAccuracy: localizacion.altitudeAccuracy ?? undefined,
       heading: localizacion.heading ?? undefined,
