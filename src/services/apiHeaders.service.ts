@@ -13,7 +13,13 @@ export class HeaderService implements HttpInterceptor {
   private _token: string = '';
   private _idTransaccion: string = '';
   constructor(private readonly appStateService: AppStateService) {
-    this.init();
+    this.initialize();
+  }
+
+  private initialize() {
+    this.init().catch((error) => {
+      console.error('Initialization failed', error);
+    });
   }
   private async init() {
     let token = await this.appStateService.getBearerToken();
