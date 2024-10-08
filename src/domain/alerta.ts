@@ -18,11 +18,10 @@ export interface Enviado {
 }
 
 export enum StatusAlerta {
-  ACTIVA = 'Activa',
-  CANCELADA = 'Cancelada',
+  ATENDIDA = 'Activa',
   ENVIADA = 'Enviada',
   RECHAZADA = 'Rechazada',
-  terminadaPorTiempo = 'Terminada por tiempo',
+  TerminadaPorTiempo = 'Terminada por tiempo',
 }
 export interface MessageModal {
   title: string;

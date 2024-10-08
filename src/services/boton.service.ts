@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { lastValueFrom } from 'rxjs';
+import { DefaultService } from 'src/api/generated';
 import {
   Enviado,
   EnviarTipo,
@@ -15,6 +17,7 @@ export class BotonService {
   constructor(
     private readonly appStateService: AppStateService,
     private readonly router: Router,
+    private readonly appBotonServices: DefaultService,
   ) {}
 
   async sendAlert() {
@@ -47,7 +50,14 @@ export class BotonService {
   }
 
   async checarComunicacion(): Promise<boolean> {
-    return true;
+    return await lastValueFrom(this.appBotonServices.checarComunicacionGet())
+      .then((response) => {
+        return true;
+      })
+      .catch((error) => {
+        console.error(error);
+        return false;
+      });
   }
   seleccionarTipoAlerta(tipo: TipoAlerta) {
     this.appStateService.startLoading();
@@ -110,18 +120,18 @@ export class BotonService {
   getStatusAlerta(): StatusAlerta | null {
     this.contador++;
     const statusAlertaEnAplicacion = this.appStateService.getStatusAlerta();
-    if (statusAlertaEnAplicacion === StatusAlerta.terminadaPorTiempo) {
-      return StatusAlerta.terminadaPorTiempo;
+    if (statusAlertaEnAplicacion === StatusAlerta.TerminadaPorTiempo) {
+      return StatusAlerta.TerminadaPorTiempo;
     }
     if (this.contador <= 20) {
       this.appStateService.saveStatusAlerta(StatusAlerta.ENVIADA);
       return StatusAlerta.ENVIADA;
     } else {
-      this.appStateService.saveStatusAlerta(StatusAlerta.ACTIVA);
-      return StatusAlerta.ACTIVA;
+      this.appStateService.saveStatusAlerta(StatusAlerta.ATENDIDA);
+      return StatusAlerta.ATENDIDA;
     }
   }
   terminarPorTiempo() {
-    this.appStateService.saveStatusAlerta(StatusAlerta.terminadaPorTiempo);
+    this.appStateService.saveStatusAlerta(StatusAlerta.TerminadaPorTiempo);
   }
 }

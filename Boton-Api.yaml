@@ -218,7 +218,7 @@ get:
                   id: qrjogfrmrbp7v
                 enum:
                   - ATENDIDA
-                  - PENDIENTE
+              -   RECHAZADA
                   - RECHAZADA
                   - OTRA
           examples:
