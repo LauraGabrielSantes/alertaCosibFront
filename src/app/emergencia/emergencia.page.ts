@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   IonButton,
   IonContent,
@@ -31,13 +32,14 @@ const TotalTime = 3;
 export class EmergenciaPage implements OnInit, OnDestroy {
   private intervalId: any = null;
   connectionStatus: boolean = false;
-
+  alartaStatus: boolean = false;
   countdown: number = TotalTime;
   private countdownInterval: any;
   isUam: boolean | null = null;
   constructor(
     private readonly appStateService: AppStateService,
     private readonly botonService: BotonService,
+    private readonly router: Router,
   ) {}
   async ngOnInit() {
     this.connectionStatus = await this.botonService.checarComunicacion();
@@ -51,6 +53,11 @@ export class EmergenciaPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
+    this.alartaStatus = this.appStateService.getStatusAlerta() !== null;
+
+    if (this.alartaStatus) {
+      this.router.navigate(['/send-more-info']);
+    }
     this.updateScreen();
     this.startConnectionCheck();
     this.countdown = TotalTime;

@@ -62,7 +62,12 @@ export class SendMoreInfoPage {
     if (!this.isActiveAlert) {
       this.router.navigate(['']);
     }
+
     this.tipoAlerta = this.appStateService.getTipoAlerta();
+    if (this.tipoAlerta == null) {
+      this.router.navigate(['selecciona']);
+    }
+
     this.status = this.appStateService.getStatusAlerta();
     this.numeroDeMensajes = this.appStateService.getEnviados().length;
 

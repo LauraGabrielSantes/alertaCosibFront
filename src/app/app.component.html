@@ -20,7 +20,9 @@
       @if (helpBubbleExpanded) {
       <div>Estatus: {{status??"No definido"}}
       </div>
-      <div (click)="goStatus()" (keydown)="goStatus()" class="icon-opción">Ir</div>
+      <div (click)="goStatus()" [class.no-opcion]="router.url == '/send-more-info'" (keydown)="goStatus()"
+        class="icon-opción">Ir
+      </div>
       }
     </div>
     }
@@ -39,19 +41,19 @@
     <div class="contenido-menu">
       <ion-menu-toggle>
         <div class="opciones">
-          <div class="opcion" (click)="goPrincipal()">
+          <div class="opcion" (click)="goPrincipal()" (keydown)="goPrincipal()">
             <img src="assets/icon/SVG/boton-emergencia-menu.svg" alt="boton" class="icono-menu">
             <div class="text-opcion">Botón de emergencia</div>
           </div>
-          <div class="opcion" (click)="navigateTo('servicios')">
+          <div class="opcion" (click)="navigateTo('servicios')" (keydown)="navigateTo('servicios')">
             <img src="assets/icon/SVG/servicios-boton-menu.svg" alt="Servicios" class="icono-menu">
             <div class="text-opcion">Servicios COSIB</div>
           </div>
-          <div class="opcion" (click)="navigateTo('configuracion')">
+          <div class="opcion" (click)="navigateTo('configuracion')" (keydown)="navigateTo('configuracion')">
             <img src="assets/icon/SVG/configuracion-boton-menu.svg" alt="Configuracion" class="icono-menu">
             <div class="text-opcion">Configuración</div>
           </div>
-          <div class="opcion" (click)="navigateTo('legal')">
+          <div class="opcion" (click)="navigateTo('legal')" (keydown)="navigateTo('legal')">
             <img src="assets/icon/SVG/legal-doc.svg" alt="Configuracion" class="icono-menu">
             <div class="text-opcion">Información Legal</div>
           </div>

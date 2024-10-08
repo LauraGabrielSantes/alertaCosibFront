@@ -37,11 +37,11 @@ export class ServiciosPage {
     await this.router.navigate([`/${page}`]);
   }
 
-  goTelefono(numero: String) {
+  goTelefono(numero: string) {
     let telefono = 'tel:' + numero;
     window.location.href = telefono;
   }
-  goExternalLink(link: String) {
-    window.open(link.toString(), '_blank');
+  goExternalLink(link: string) {
+    window.open(link, '_blank');
   }
 }

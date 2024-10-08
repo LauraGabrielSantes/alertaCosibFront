@@ -51,13 +51,14 @@
 }
 @case (EnviarTipo.UBICACION) {
 <div class="contenido">
-  <div class="titulo-enviar">Por favor, especifica tu ubicación en la UAM Iztapalapa.</div>
+  <div class="titulo-enviar">Por favor, especifica tu ubicación dentro la <b> UAM Iztapalapa</b>.</div>
   <div class="opciones">
-    <input type="text" id="ubicacionInput" (input)="onInputChange($event)" placeholder="Escribe tu ubicación..."
+    <input type="text" id="ubicacionInput" (input)="onInputChange($event)" placeholder="Busca tu ubicación..."
       class="ubicacion-input" />
     <div>selecciona la ubicación mas cercana</div>
     <ul id="suggestionsList" class="suggestions-list" *ngIf="suggestions.length > 0">
-      <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)" class="suggestion-item">{{
+      <li *ngFor="let suggestion of suggestions" (click)="selectSuggestion(suggestion)"
+        (keydown)="selectSuggestion(suggestion)" class="suggestion-item">{{
         suggestion }}</li>
     </ul>
     <select [(ngModel)]="selectedLugar" (change)="onLugarChange($event)" class="lugar-select">
@@ -67,10 +68,10 @@
     <div class="texto-especifica">
       <p>Si puedes agrega mas informacion de tu hubicacion ejemplo: piso 2</p>
       <textarea [(ngModel)]="ubicacionEspecifica" class="ubicacion-especifica"
-        placeholder="Escribe tu ubicación..."></textarea>
+        placeholder="Busca tu localizacion..."></textarea>
     </div>
     <div class="botones-acciones">
-      <div class="boton enviar" (click)="enviarUbicacion()">Enviar</div>
+      <div class="boton enviar" (click)="enviarUbicacion()" (keydown)="enviarUbicacion()">Enviar</div>
       <div class="boton cancelar" (click)="cancelarEnvio()" (keydown)="cancelarEnvio()">Cancelar</div>
     </div>
   </div>

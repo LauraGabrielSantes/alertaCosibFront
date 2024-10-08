@@ -20,6 +20,7 @@ import { routes } from './app/app.routes';
 import { environment } from './environments/environment';
 import { AppStateService } from './services/app-state.service';
 // Call the element loader before the bootstrapModule/bootstrapApplication call
+navigator.serviceWorker.register('./assets/sw.js');
 defineCustomElements(window);
 bootstrapApplication(AppComponent, {
   providers: [

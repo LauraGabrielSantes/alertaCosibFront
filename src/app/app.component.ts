@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
   isModalAlert: boolean = false;
   modalMessage: MessageModal | null = null;
   constructor(
-    private readonly router: Router,
+    readonly router: Router,
     private readonly menuCtrl: MenuController,
     private readonly appStateService: AppStateService, // Inyecta el servicio
     private readonly botonService: BotonService,
@@ -97,88 +97,133 @@ export class AppComponent implements OnInit {
   lastStatus: StatusAlerta | null = null;
   async ngOnInit() {
     await this.generateDeviceIdAndLocation();
+    this.requestNotificationPermission();
+    this.initializeAlertStatus();
+    this.subscribeToAlertChanges();
+    this.subscribeToAppStateUpdates();
+    this.handleAlertTimeout();
+  }
+
+  // Solicita el permiso de notificaciones al iniciar
+  private requestNotificationPermission() {
     Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        console.log('Permiso de notificaciones otorgado.');
-      } else {
-        console.log('Permiso de notificaciones denegado.');
-      }
+      console.log(
+        permission === 'granted'
+          ? 'Permiso de notificaciones otorgado.'
+          : 'Permiso de notificaciones denegado.',
+      );
     });
+  }
+
+  // Inicializa los estados de alerta y mensaje modal
+  private initializeAlertStatus() {
     this.tipoAlerta = this.appStateService.getTipoAlerta();
     this.status = this.botonService.getStatusAlerta();
     this.lastStatus = this.status;
     this.modalMessage = this.appStateService.getMessageModal();
-    setInterval(async () => {
-      if (this.isAlertActive !== null && this.isAlertActive) {
+
+    setInterval(() => {
+      if (this.isAlertActive) {
         this.status = this.botonService.getStatusAlerta();
       }
     }, 500);
+  }
 
-    this.appStateService.tipoAlerta.subscribe((tipo) => {
-      this.tipoAlerta = tipo;
+  // Suscribirse a los cambios del estado de alerta
+  private subscribeToAlertChanges() {
+    this.appStateService.statusAlerta.subscribe(async (status) => {
+      this.status = status;
+
+      if (this.isAlertStateChanged()) {
+        this.lastStatus = this.status;
+        this.playNotificationSound();
+        await this.handleNotification().catch((error) => {
+          console.error('Error al manejar la notificación:', error);
+        });
+      }
     });
+  }
+
+  // Comprueba si el estado de alerta ha cambiado
+  private isAlertStateChanged() {
+    return (
+      this.lastStatus !== this.status &&
+      this.status !== null &&
+      this.lastStatus !== null &&
+      this.isAlertActive
+    );
+  }
+
+  // Maneja las notificaciones, ya sea a través de la API nativa o el Service Worker
+  private async handleNotification() {
+    const options = {
+      body: 'Estado de la alerta: ' + this.status,
+      icon: 'assets/icono.png',
+      vibrate: [200, 100, 200],
+      tag: 'Cambio de estado de la alerta',
+      renotify: true,
+    };
+
+    try {
+      if (Notification.permission === 'granted') {
+        const notification = new Notification(
+          'Cambio de estado de la alerta',
+          options,
+        );
+
+        notification.onclick = () => {
+          window.focus();
+          this.router.navigate(['send-more-info']);
+        };
+      } else {
+        await Notification.requestPermission();
+      }
+    } catch (error) {
+      await navigator.serviceWorker.register('./assets/sw.js');
+      await navigator.serviceWorker.ready.then((registration) => {
+        registration.showNotification('Cambio de estado de la alerta', {
+          body: options.body,
+          icon: options.icon,
+          tag: 'Cambio de estado de la alerta',
+        });
+      });
+    }
+  }
+
+  // Reproduce el sonido de la notificación
+  private playNotificationSound() {
+    this.notification = true;
+    const audio = new Audio('/assets/noti.wav');
+    audio.play();
+  }
+
+  // Suscribirse a cambios en el estado de la aplicación
+  private subscribeToAppStateUpdates() {
+    this.appStateService.tipoAlerta.subscribe(
+      (tipo) => (this.tipoAlerta = tipo),
+    );
     this.appStateService.messageModal.subscribe((message) => {
       this.modalMessage = message;
-      if (this.modalMessage !== null) {
-        this.isModalAlert = true;
-      }
+      this.isModalAlert = !!message;
     });
+    this.appStateService.currentTitle.subscribe(
+      (title) => (this.pageTitle = title),
+    );
+    this.appStateService.currentBackgroundClass.subscribe(
+      (backgroundClass) => (this.backgroundClass = backgroundClass),
+    );
+    this.appStateService.isLoading.subscribe(
+      (loading) => (this.isLoading = loading),
+    );
+  }
 
-    this.appStateService.statusAlerta.subscribe((status) => {
-      this.status = status;
-      if (
-        this.lastStatus !== this.status &&
-        this.status !== null &&
-        this.lastStatus !== null &&
-        this.isAlertActive
-      ) {
-        if (Notification.permission === 'granted') {
-          const options = {
-            body: 'Estado de la alerta: ' + this.status,
-            icon: 'assets/icono.png',
-            vibrate: [200, 100, 200],
-            tag: 'Cambio de estado de la alerta',
-            renotify: true,
-          };
-
-          const notification = new Notification(
-            'Cambio de estado de la alerta',
-            options,
-          );
-          notification.onclick = (event) => {
-            window.focus();
-            this.router.navigate(['send-more-info']);
-          };
-        }
-        this.notification = true;
-        const audio = new Audio('/assets/noti.wav');
-        audio.play();
-      }
-      this.lastStatus = this.status;
-    });
-
-    this.appStateService.currentTitle.subscribe((title) => {
-      this.pageTitle = title;
-    });
-
-    this.appStateService.currentBackgroundClass.subscribe((backgroundClass) => {
-      this.backgroundClass = backgroundClass;
-    });
-    this.appStateService.isLoading.subscribe((loading) => {
-      this.isLoading = loading;
-    });
+  private handleAlertTimeout() {
     this.appStateService.isActiveAlert.subscribe((alert) => {
       this.isAlertActive = alert ?? false;
 
       if (this.isAlertActive) {
-        //dejo que pasen 30 minutos y despues termino la alerta
-        setTimeout(() => {
-          this.botonService.cancelarAlerta();
-        }, 1800000);
-        // alos 28 minutos envio a this.botonService.terminadaPorTiempo();
-        setTimeout(() => {
-          this.botonService.terminarPorTiempo();
-        }, 1680000);
+        setTimeout(() => this.botonService.cancelarAlerta(), 1800000);
+        setTimeout(() => this.botonService.terminarPorTiempo(), 1680000);
       }
     });
   }
