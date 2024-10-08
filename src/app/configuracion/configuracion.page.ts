@@ -11,7 +11,9 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular/standalone';
+import { DatosUsuario } from 'src/domain/alerta';
 import { AppStateService } from 'src/services/app-state.service';
+import { BotonService } from 'src/services/boton.service';
 
 @Component({
   selector: 'app-configuracion',
@@ -33,10 +35,29 @@ import { AppStateService } from 'src/services/app-state.service';
 })
 export class ConfiguracionPage {
   constructor(
-    private readonly appStateService: AppStateService, // Inyecta el servicio
+    private readonly appStateService: AppStateService,
+    private readonly botonService: BotonService,
   ) {}
+  datosUsuario: DatosUsuario = {
+    nombreCompleto: '',
+    correoElectronico: '',
+    matricula: '',
+    numeroTelefono: '',
+  };
   ionViewWillEnter() {
+    const datosUsuario = this.appStateService.getDatosUsuario();
+    if (datosUsuario !== null) {
+      this.datosUsuario = datosUsuario;
+    }
     this.appStateService.changeTitle('Configuración');
     this.appStateService.defaultBackground();
+  }
+  guardar() {
+    this.botonService.saveDatosUsuario(this.datosUsuario).then(() => {
+      this.appStateService.sendMessageModal({
+        title: 'Guardado',
+        message: 'Datos guardados correctamente',
+      });
+    });
   }
 }

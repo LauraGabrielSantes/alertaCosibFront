@@ -13,6 +13,8 @@
 
 export interface EnviarAlertaPost200Response { 
     token?: string;
-    contenido?: string;
+    idMensaje?: number;
+    horaEnvio?: string;
+    uam?: boolean;
 }
 

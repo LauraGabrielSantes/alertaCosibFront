@@ -47,6 +47,7 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     await this.updateScreen();
     this.appStateService.isUam.subscribe(async (isUam) => {
       this.isUam = isUam;
+      console.log('isUam es: ' + isUam);
       await this.updateScreen();
     });
   }
@@ -89,14 +90,20 @@ export class EmergenciaPage implements OnInit, OnDestroy {
   private setBlueBackground() {
     this.appStateService.changeBackgroundAzul();
   }
+  isLoading = false;
 
   private startConnectionCheck() {
-    this.intervalId = setInterval(async () => {
-      this.connectionStatus = await this.botonService.checarComunicacion();
-      await this.updateScreen();
-    }, 1000);
+    const checkConnection = async () => {
+      if (!this.isLoading) {
+        this.connectionStatus = await this.botonService.checarComunicacion();
+        await this.updateScreen();
+        clearInterval(this.intervalId);
+        const newInterval = this.connectionStatus ? 15000 : 1500; // 25 segundos o 1.5 segundos
+        this.intervalId = setInterval(checkConnection, newInterval);
+      }
+    };
+    this.intervalId = setInterval(checkConnection, 3000);
   }
-
   private cleanup() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
@@ -152,15 +159,19 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     }, 600);
   }
   private enviarAlerta() {
+    this.isLoading = true;
     try {
+      this.botonService.sendAlert().catch((e) => {
+        this.countdown = TotalTime;
+      });
+
       const audio = new Audio('/assets/alert.mp3');
       audio.play();
     } catch (e) {
       console.log(e);
+    } finally {
+      this.isLoading = false;
     }
-    this.botonService.sendAlert().catch((e) => {
-      this.countdown = TotalTime;
-    });
   }
   cancelar() {
     this.botonService.cancelarAlerta();

@@ -18,16 +18,22 @@ export interface Enviado {
 }
 
 export enum StatusAlerta {
-  ATENDIDA = 'Activa',
-  ENVIADA = 'Enviada',
+  ATENDIDA = 'Atendida',
+  PENDIENTE = 'Enviada',
   RECHAZADA = 'Rechazada',
+  ERROR = 'Error',
   TerminadaPorTiempo = 'Terminada por tiempo',
 }
 export interface MessageModal {
   title: string;
   message: string;
 }
-
+export interface DatosUsuario {
+  nombreCompleto: string;
+  matricula: string;
+  numeroTelefono: string;
+  correoElectronico: string;
+}
 export const Lugares = [
   'Edificio A - Rectoría',
   'Edificio AA - Cómputo',

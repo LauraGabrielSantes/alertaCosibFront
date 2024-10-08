@@ -12,7 +12,7 @@
 
 
 export interface EstadoAtendida201Response { 
-    Tipo?: EstadoAtendida201Response.TipoEnum;
+    tipo?: EstadoAtendida201Response.TipoEnum;
 }
 export namespace EstadoAtendida201Response {
     export type TipoEnum = 'ATENDIDA' | 'PENDIENTE' | 'RECHAZADA' | 'OTRA';

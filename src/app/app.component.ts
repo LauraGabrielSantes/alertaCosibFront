@@ -39,7 +39,6 @@ import { BotonService } from 'src/services/boton.service';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-
   imports: [
     RouterLink,
     RouterLinkActive,
@@ -116,15 +115,15 @@ export class AppComponent implements OnInit {
   }
 
   // Inicializa los estados de alerta y mensaje modal
-  private initializeAlertStatus() {
+  private async initializeAlertStatus() {
     this.tipoAlerta = this.appStateService.getTipoAlerta();
-    this.status = this.botonService.getStatusAlerta();
+    this.status = await this.botonService.getStatusAlerta();
     this.lastStatus = this.status;
     this.modalMessage = this.appStateService.getMessageModal();
 
-    setInterval(() => {
+    setInterval(async () => {
       if (this.isAlertActive) {
-        this.status = this.botonService.getStatusAlerta();
+        this.status = await this.botonService.getStatusAlerta();
       }
     }, 500);
   }

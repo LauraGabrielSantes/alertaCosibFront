@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Device } from '@capacitor/device';
 import { BehaviorSubject } from 'rxjs';
 import {
+  DatosUsuario,
   Enviado,
   MessageModal,
   StatusAlerta,
@@ -28,6 +29,7 @@ export class AppStateService {
     new BehaviorSubject<StatusAlerta | null>(null);
   private readonly MessageModalSource =
     new BehaviorSubject<MessageModal | null>(null);
+
   currentTitle = this.titleSource.asObservable();
   currentBackgroundClass = this.backgroundClassSource.asObservable();
   isLoading = this.isLoadingSource.asObservable();
@@ -272,5 +274,15 @@ export class AppStateService {
   }
   public saveBearerToken(token: string) {
     localStorage.setItem('bearerToken', token);
+  }
+  public saveDatosUsuario(datos: DatosUsuario) {
+    localStorage.setItem('datosUsuario', JSON.stringify(datos));
+  }
+  public getDatosUsuario(): DatosUsuario | null {
+    const datos = localStorage.getItem('datosUsuario');
+    if (datos === null) {
+      return null;
+    }
+    return JSON.parse(datos);
   }
 }

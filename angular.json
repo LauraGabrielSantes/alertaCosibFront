@@ -74,8 +74,14 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-
+          "options": {
+            "proxyConfig": "src/environments/proxy.conf.json"
+          },
           "configurations": {
+            "options": {
+              "sslCert": "./ssl/cert.crt",
+              "sslKey": "./ssl/cert.key"
+            },
             "production": {
               "buildTarget": "app:build:production",
 
@@ -93,11 +99,6 @@
             },
             "ci": {
               "progress": false
-            },
-            "options": {
-              "sslCert": "./ssl/cert.crt",
-              "sslKey": "./ssl/cert.key",
-              "proxyConfig": "/src/environments/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
