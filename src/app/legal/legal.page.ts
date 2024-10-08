@@ -31,7 +31,7 @@ export class LegalPage implements OnInit {
   ) {}
   opcionActiva = false;
   ionViewWillEnter() {
-    this.appStateService.changeTitle('Informacion legal');
+    this.appStateService.changeTitle('Información Legal');
     this.appStateService.defaultBackground();
   }
 
