@@ -136,6 +136,14 @@ export class AppComponent implements OnInit {
       if (this.isAlertStateChanged()) {
         this.lastStatus = this.status;
         this.playNotificationSound();
+        if (this.status === StatusAlerta.RECHAZADA) {
+          this.appStateService.sendMessageModal({
+            title: 'Alerta rechazada',
+            message:
+              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda.',
+          });
+        }
+
         await this.handleNotification().catch((error) => {
           console.error('Error al manejar la notificación:', error);
         });
