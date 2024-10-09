@@ -187,7 +187,7 @@ paths:
                       type: string
                     descripcion:
                       type: string
-  "/reportes/obtener/{id}":
+  /reportes/obtener/{id}:
     get:
       summary: Obtener un reporte por ID
       description: Devuelve un reporte específico basado en su ID.
@@ -211,10 +211,9 @@ paths:
                     type: string
         "404":
           description: Reporte no encontrado.
-  "/estadoAlerta/{idDispositivo}":
+  /estadoAlerta:
     get:
       summary: Estado de la Alerta
-      tags: []
       responses:
         "201":
           description: Created
@@ -224,27 +223,31 @@ paths:
                 type: object
                 properties:
                   tipo:
-                    x-stoplight:
-                      id: qrjogfrmrbp7v
+                    type: string
                     enum:
-                      - ATENDIDA
-                      - PENDIENTE
+                      - NO_DEFINIDO
+                      - ENVIADO
+                      - ESPERANDO_RESPUESTA
                       - RECHAZADA
-                      - OTRA
+                      - EN_ATENCION
+                      - FINALIZADA
+                      - CANCELADA
               examples:
                 Example 1:
                   value:
                     tipo: Atendida
       operationId: EstadoAtendida
-      x-stoplight:
-        id: 8mg6zeq51j6fq
-      parameters: []
-    parameters:
-      - schema:
-          type: string
-        name: idDispositivo
-        in: path
-        required: true
+      parameters:
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+  /cancelarAlerta:
+    post:
+      summary: Your POST endpoint
+      responses: {}
+      operationId: cancelar
 x-websocket:
   /boton/ws:
     description: WebSocket para enviar mensajes a "/topic/telegram" desde el prefijo `/boton`

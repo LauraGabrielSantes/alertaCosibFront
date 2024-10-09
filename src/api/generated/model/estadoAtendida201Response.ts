@@ -15,12 +15,15 @@ export interface EstadoAtendida201Response {
     tipo?: EstadoAtendida201Response.TipoEnum;
 }
 export namespace EstadoAtendida201Response {
-    export type TipoEnum = 'ATENDIDA' | 'PENDIENTE' | 'RECHAZADA' | 'OTRA';
+    export type TipoEnum = 'NO_DEFINIDO' | 'ENVIADO' | 'ESPERANDO_RESPUESTA' | 'RECHAZADA' | 'EN_ATENCION' | 'FINALIZADA' | 'CANCELADA';
     export const TipoEnum = {
-        Atendida: 'ATENDIDA' as TipoEnum,
-        Pendiente: 'PENDIENTE' as TipoEnum,
+        NoDefinido: 'NO_DEFINIDO' as TipoEnum,
+        Enviado: 'ENVIADO' as TipoEnum,
+        EsperandoRespuesta: 'ESPERANDO_RESPUESTA' as TipoEnum,
         Rechazada: 'RECHAZADA' as TipoEnum,
-        Otra: 'OTRA' as TipoEnum
+        EnAtencion: 'EN_ATENCION' as TipoEnum,
+        Finalizada: 'FINALIZADA' as TipoEnum,
+        Cancelada: 'CANCELADA' as TipoEnum
     };
 }
 
