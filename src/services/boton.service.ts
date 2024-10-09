@@ -70,6 +70,16 @@ export class BotonService {
     const respuesta: EnviarAlertaPost200Response = await lastValueFrom(
       this.appBotonServices.enviarAlertaPost(datosAEnviar),
     ).catch((error) => {
+      if (error.status === 429) {
+        this.appStateService.sendMessageModal({
+          title: 'Error',
+          message:
+            'Demasiadas solicitudes, vuelve a intentarlo en unos minutos. <a href="tel:911">llamar al 911</a>',
+        });
+        this.appStateService.stopLoading();
+        throw new Error(error);
+      }
+
       //envio alerta
       this.appStateService.sendMessageModal({
         title: 'Error de comunicacion vuelve a intentarlo. ',
@@ -167,13 +177,23 @@ export class BotonService {
 
   async getStatusAlerta(): Promise<StatusAlerta | null> {
     const bearerToken = this.appStateService.getBearerToken();
-    const id_dispositivo = await this.appStateService.getIdDispositivo();
-    if (!this.appStateService.getIsActiveAlert() || !bearerToken) {
+    if (!bearerToken) {
       return null;
     }
-    const status: EstadoAtendida201Response = await lastValueFrom(
-      this.appBotonServices.estadoAtendida(id_dispositivo),
+    const status: EstadoAtendida201Response | null = await lastValueFrom(
+      this.appBotonServices.estadoAtendida(bearerToken),
     ).catch((error) => {
+      //si el error es 401 entonces terminar la alerta
+      if (error.status === 401) {
+        this.appStateService.stopAlert();
+        this.router.navigate(['']);
+        this.appStateService.sendMessageModal({
+          title: 'Aviso',
+          message: 'La alerta ha sido terminada',
+        });
+        return null;
+      }
+
       this.appStateService.sendMessageModal({
         title: 'Error al comunicarse con el servidor',
         message: '<a href="tel:911">Llamar al 911</a>',
@@ -182,22 +202,35 @@ export class BotonService {
     });
 
     var statusAlerta: StatusAlerta;
+
+    if (!status) {
+      return null;
+    }
     console.log('Status: ', status.tipo);
     switch (status.tipo) {
-      case EstadoAtendida201Response.TipoEnum.Atendida:
-        statusAlerta = StatusAlerta.ATENDIDA;
+      case EstadoAtendida201Response.TipoEnum.EnAtencion:
+        statusAlerta = StatusAlerta.EN_ATENCION;
+        break;
+      case EstadoAtendida201Response.TipoEnum.Finalizada:
+        statusAlerta = StatusAlerta.FINALIZADA;
+        break;
+      case EstadoAtendida201Response.TipoEnum.Cancelada:
+        statusAlerta = StatusAlerta.CANCELADA;
         break;
       case EstadoAtendida201Response.TipoEnum.Rechazada:
         statusAlerta = StatusAlerta.RECHAZADA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Otra:
-        statusAlerta = StatusAlerta.TerminadaPorTiempo;
+      case EstadoAtendida201Response.TipoEnum.EsperandoRespuesta:
+        statusAlerta = StatusAlerta.ESPERANDO_RESPUESTA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Pendiente:
-        statusAlerta = StatusAlerta.PENDIENTE;
+      case EstadoAtendida201Response.TipoEnum.Enviada:
+        statusAlerta = StatusAlerta.ENVIADA;
+        break;
+      case EstadoAtendida201Response.TipoEnum.Atendida:
+        statusAlerta = StatusAlerta.ATENDIDA;
         break;
       default:
-        statusAlerta = StatusAlerta.ERROR;
+        statusAlerta = StatusAlerta.NO_DEFINIDO;
         break;
     }
     this.appStateService.saveStatusAlerta(statusAlerta);
@@ -243,19 +276,6 @@ export class BotonService {
     this.router.navigate(['/send-more-info']);
   }
 
-  terminarPorTiempo() {
-    const bearerToken = this.appStateService.getBearerToken();
-    if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
-        contenido: 'Mansaje automático: Alerta terminada por tiempo',
-      };
-      lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      );
-    }
-    this.appStateService.saveStatusAlerta(StatusAlerta.TerminadaPorTiempo);
-  }
-
   async sendMasInfo(textoMasInfo: string) {
     this.appStateService.startLoading();
     console.log('Más información: ', textoMasInfo);
@@ -286,20 +306,9 @@ export class BotonService {
   cancelarAlerta() {
     this.appStateService.startLoading();
     const bearerToken = this.appStateService.getBearerToken();
-    if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
-        contenido: `El usuario Solicita cancelar la alerta`,
-      };
-      lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      ).catch((error) => {
-        this.appStateService.sendMessageModal({
-          title: 'Error',
-          message: 'Error al cancelar la alerta, vuelve a intentarlo. ' + error,
-        });
-      });
+    if (bearerToken) {
+      this.appBotonServices.cancelar();
     }
-
     this.appStateService.stopAlert();
     this.appStateService.stopLoading();
     this.router.navigate(['']);

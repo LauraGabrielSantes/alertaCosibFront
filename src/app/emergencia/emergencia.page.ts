@@ -32,7 +32,6 @@ const TotalTime = 3;
 export class EmergenciaPage implements OnInit, OnDestroy {
   private intervalId: any = null;
   connectionStatus: boolean = false;
-  alartaStatus: boolean = false;
   countdown: number = TotalTime;
   private countdownInterval: any;
   isUam: boolean | null = null;
@@ -54,9 +53,9 @@ export class EmergenciaPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.appStateService.changeTitle('Emergencia');
-    this.alartaStatus = this.appStateService.getStatusAlerta() !== null;
+
     const alertaActiva = this.appStateService.getIsActiveAlert();
-    if (this.alartaStatus && alertaActiva) {
+    if (this.botonService.getStatusAlerta() !== null && alertaActiva) {
       this.router.navigate(['/send-more-info']);
     }
     this.updateScreen();
@@ -91,10 +90,13 @@ export class EmergenciaPage implements OnInit, OnDestroy {
     this.appStateService.changeBackgroundAzul();
   }
   isLoading = false;
-
+  statusAlertaActive = false;
   private startConnectionCheck() {
+    this.appStateService.statusAlerta.subscribe((status) => {
+      this.statusAlertaActive = status != null;
+    });
     const checkConnection = async () => {
-      if (!this.isLoading) {
+      if (!this.isLoading && !this.statusAlertaActive) {
         this.connectionStatus = await this.botonService.checarComunicacion();
         await this.updateScreen();
         clearInterval(this.intervalId);

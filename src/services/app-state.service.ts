@@ -87,6 +87,7 @@ export class AppStateService {
     this.tipoAlertaSource.next(null);
     this.enviadosSource.next([]);
     this.statusAlertaSource.next(null);
+    this.saveBearerToken(null);
     localStorage.removeItem('isUam');
     localStorage.removeItem('tipoAlerta');
     localStorage.removeItem('enviados');
@@ -272,7 +273,11 @@ export class AppStateService {
   public getBearerToken(): string | null {
     return localStorage.getItem('bearerToken');
   }
-  public saveBearerToken(token: string) {
+  public saveBearerToken(token: string | null) {
+    if (token == null) {
+      localStorage.removeItem('bearerToken');
+      return;
+    }
     localStorage.setItem('bearerToken', token);
   }
   public saveDatosUsuario(datos: DatosUsuario) {

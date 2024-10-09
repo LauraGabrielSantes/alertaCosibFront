@@ -16,13 +16,27 @@ export interface Enviado {
   ubicacionEspecificacion?: string;
   informacion?: string;
 }
+/**
+ *     NO_DEFINIDO(1,"No definido"),
+    FINALIZADA(2,"Finalizada"),
+    ESPERANDO_RESPUESTA(3,"Esperando respuesta"),
+    RECHAZADA(4,"Rechazada"),
+    ATENDIDA(5,"Atendida"),
+    CANCELADA(6,"Cancelada"),
+    EN_ATENCION(7,"En atencion"),
+    ENVIADA(8,"Enviada");
+
+ */
 
 export enum StatusAlerta {
-  ATENDIDA = 'Atendida',
-  PENDIENTE = 'Enviada',
+  NO_DEFINIDO = 'No definido',
+  FINALIZADA = 'Finalizada',
+  ESPERANDO_RESPUESTA = 'Esperando respuesta',
   RECHAZADA = 'Rechazada',
-  ERROR = 'Error',
-  TerminadaPorTiempo = 'Terminada por tiempo',
+  ATENDIDA = 'Atendida',
+  CANCELADA = 'Cancelada',
+  EN_ATENCION = 'En atencion',
+  ENVIADA = 'Enviada',
 }
 export interface MessageModal {
   title: string;

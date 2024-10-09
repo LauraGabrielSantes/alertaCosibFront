@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
   pageTitle: string = ''; // Título inicial
   backgroundClass: string = 'background-default'; // Clase de fondo inicial
   isLoading = false;
-  isAlertActive;
+  isAlertActive: boolean | null = false;
   StatusAlerta = StatusAlerta;
   status: StatusAlerta | null = null;
   notification = false;
@@ -140,14 +140,17 @@ export class AppComponent implements OnInit {
           this.appStateService.sendMessageModal({
             title: 'Alerta rechazada',
             message:
-              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda                .',
+              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda.',
           });
+          setTimeout(() => {
+            this.appStateService.stopAlert();
+          }, 1000);
         }
-
         await this.handleNotification().catch((error) => {
           console.error('Error al manejar la notificación:', error);
         });
       }
+      this.lastStatus = this.status;
     });
   }
 
@@ -226,12 +229,7 @@ export class AppComponent implements OnInit {
 
   private handleAlertTimeout() {
     this.appStateService.isActiveAlert.subscribe((alert) => {
-      this.isAlertActive = alert ?? false;
-
-      if (this.isAlertActive) {
-        setTimeout(() => this.botonService.cancelarAlerta(), 1800000);
-        setTimeout(() => this.botonService.terminarPorTiempo(), 1680000);
-      }
+      this.isAlertActive = alert;
     });
   }
   async openMenu() {

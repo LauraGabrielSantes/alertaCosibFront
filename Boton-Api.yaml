@@ -226,12 +226,13 @@ paths:
                     type: string
                     enum:
                       - NO_DEFINIDO
-                      - ENVIADO
+                      - ENVIADA
                       - ESPERANDO_RESPUESTA
                       - RECHAZADA
                       - EN_ATENCION
                       - FINALIZADA
                       - CANCELADA
+                      - ATENDIDA
               examples:
                 Example 1:
                   value:
