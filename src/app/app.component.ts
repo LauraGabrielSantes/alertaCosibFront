@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Device } from '@capacitor/device';
 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -33,7 +34,6 @@ import {
 import { MessageModal, StatusAlerta, TipoAlerta } from 'src/domain/alerta';
 import { AppStateService } from 'src/services/app-state.service';
 import { BotonService } from 'src/services/boton.service';
-
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -85,16 +85,37 @@ export class AppComponent implements OnInit {
   notification = false;
   isModalAlert: boolean = false;
   modalMessage: MessageModal | null = null;
+  private readonly config: { version: string };
+
   constructor(
     readonly router: Router,
     private readonly menuCtrl: MenuController,
     private readonly appStateService: AppStateService, // Inyecta el servicio
     private readonly botonService: BotonService,
+    private readonly httpClient: HttpClient,
   ) {
     this.isAlertActive = this.appStateService.getIsActiveAlert();
+    this.config = require('./../assets/config.json');
   }
   lastStatus: StatusAlerta | null = null;
   async ngOnInit() {
+    const headers = new HttpHeaders()
+      .set('Cache-Control', 'no-cache')
+      .set('Pragma', 'no-cache');
+
+    this.httpClient
+      .get<{ version: string }>('/assets/config.json', { headers })
+      .subscribe({
+        next: (config) => {
+          if (config.version !== this.config.version) {
+            location.reload();
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching config:', error);
+        },
+      });
+
     await this.generateDeviceIdAndLocation();
     this.requestNotificationPermission();
     this.initializeAlertStatus();
