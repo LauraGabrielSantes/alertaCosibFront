@@ -96,7 +96,7 @@ export class BotonService {
       throw new Error('El token no se genero');
     }
     this.appStateService.saveBearerToken(respuesta.token);
-    this.appStateService.startAlert(respuesta.uam ?? true);
+
     const fecha = new Date(respuesta.horaEnvio);
     // Extraer la hora y los minutos
     const hora = fecha.getHours().toString().padStart(2, '0'); // Asegurar que tenga 2 dígitos
@@ -104,7 +104,8 @@ export class BotonService {
     // Formatear como "hora:minuto"
     const horaMinuto = `${hora}:${minutos}`;
     this.appStateService.saveHoraAlerta(horaMinuto);
-    this.router.navigate(['/selecciona']);
+    this.appStateService.startAlert(respuesta.uam ?? true);
+    if (respuesta.uam) this.router.navigate(['/selecciona']);
     this.appStateService.stopLoading();
   }
 
