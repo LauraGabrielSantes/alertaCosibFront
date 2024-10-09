@@ -83,11 +83,10 @@ export class BotonService {
       //envio alerta
       this.appStateService.sendMessageModal({
         title: 'Error de comunicacion vuelve a intentarlo. ',
-        message: 'llama<a href="tel:911">llamar al 911</a>' + error,
+        message: 'o llama<a href="tel:911">llamar al 911</a>' + error,
       });
       throw new Error(error);
     });
-    console.log('Respuesta: ', respuesta);
     this.appStateService.setInUam(respuesta.uam === true);
     if (respuesta.uam !== true) {
       this.appStateService.stopLoading();
@@ -107,7 +106,7 @@ export class BotonService {
     // Extraer la hora y los minutos
     const hora = fecha.getHours().toString().padStart(2, '0'); // Asegurar que tenga 2 dígitos
     const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Asegurar que tenga 2 dígitos
-
+    this.appStateService.startAlert(true);
     // Formatear como "hora:minuto"
     const horaMinuto = `${hora}:${minutos}`;
     this.appStateService.saveHoraAlerta(horaMinuto);
