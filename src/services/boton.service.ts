@@ -87,13 +87,6 @@ export class BotonService {
       });
       throw new Error(error);
     });
-    this.appStateService.setInUam(respuesta.uam === true);
-    if (respuesta.uam !== true) {
-      this.appStateService.stopLoading();
-      this.appStateService.saveBearerToken(respuesta.token!);
-      this.appStateService.startAlert(false);
-      throw new Error('No se genero la alerta.');
-    }
 
     if (!respuesta.token || !respuesta.horaEnvio) {
       this.appStateService.sendMessageModal({
@@ -102,11 +95,12 @@ export class BotonService {
       });
       throw new Error('El token no se genero');
     }
+    this.appStateService.saveBearerToken(respuesta.token);
+    this.appStateService.startAlert(respuesta.uam ?? true);
     const fecha = new Date(respuesta.horaEnvio);
     // Extraer la hora y los minutos
     const hora = fecha.getHours().toString().padStart(2, '0'); // Asegurar que tenga 2 dígitos
     const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Asegurar que tenga 2 dígitos
-    this.appStateService.startAlert(true);
     // Formatear como "hora:minuto"
     const horaMinuto = `${hora}:${minutos}`;
     this.appStateService.saveHoraAlerta(horaMinuto);

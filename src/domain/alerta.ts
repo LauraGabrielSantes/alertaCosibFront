@@ -16,17 +16,6 @@ export interface Enviado {
   ubicacionEspecificacion?: string;
   informacion?: string;
 }
-/**
- *     NO_DEFINIDO(1,"No definido"),
-    FINALIZADA(2,"Finalizada"),
-    ESPERANDO_RESPUESTA(3,"Esperando respuesta"),
-    RECHAZADA(4,"Rechazada"),
-    ATENDIDA(5,"Atendida"),
-    CANCELADA(6,"Cancelada"),
-    EN_ATENCION(7,"En atencion"),
-    ENVIADA(8,"Enviada");
-
- */
 
 export enum StatusAlerta {
   NO_DEFINIDO = 'No definido',

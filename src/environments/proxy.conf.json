@@ -1,6 +1,6 @@
 {
   "/boton": {
-    "target": "http://localhost:8080",
+    "target": "https://alerta-cosib.jquiroz.net",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
