@@ -159,9 +159,9 @@ export class AppComponent implements OnInit {
         this.playNotificationSound();
         if (this.status === StatusAlerta.RECHAZADA) {
           this.appStateService.sendMessageModal({
-            title: 'Alerta rechazada',
+            title: 'Alerta no procesada',
             message:
-              'Tu alerta ha sido rechazada <br> Por favor, <a href="tel:911">llama al 911</a> si necesitas ayuda.',
+              'Lo sentimos, no es posible procesar la alerta en este momento. <br> Por favor, <b><a href="tel:911">llama al 911</a></b> si necesitas ayuda.',
           });
           setTimeout(() => {
             this.appStateService.stopAlert();
