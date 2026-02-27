@@ -12,12 +12,20 @@
 
 
 /**
- * Respuesta con mensaje de resultado de una operación
+ * Colección de mensajes asociados a un dispositivo
  */
-export interface PostAlerta { 
+export interface Conversaciones { 
     /**
-     * Mensaje descriptivo del resultado de la operación
+     * ID único del documento en MongoDB
      */
-    mensaje?: string;
+    id?: string;
+    /**
+     * ID del dispositivo asociado
+     */
+    idDispositivo?: string;
+    /**
+     * Lista de mensajes del dispositivo
+     */
+    mensajes?: Array<string>;
 }
 

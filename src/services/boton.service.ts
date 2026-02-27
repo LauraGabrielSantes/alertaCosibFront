@@ -2,12 +2,15 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 import {
-  DefaultService,
-  EnviarAlertaPost200Response,
-  EnviarAlertaPostRequest,
-  EnviarAlertaPostRequestLocalizacion,
-  EnviarMensajePostRequest,
-  EstadoAtendida201Response,
+  AlertasService,
+  Configuration,
+  Localizacion,
+  Mensaje,
+  MensajesService,
+  MultimediaService,
+  Respuesta,
+  SaludService,
+  Solicitud,
 } from 'src/api/generated';
 import {
   DatosUsuario,
@@ -26,8 +29,23 @@ export class BotonService {
   constructor(
     private readonly appStateService: AppStateService,
     private readonly router: Router,
-    private readonly appBotonServices: DefaultService,
-  ) {}
+    private readonly alertasService: AlertasService,
+    private readonly mensajesService: MensajesService,
+    private readonly multimediaService: MultimediaService,
+    private readonly saludService: SaludService,
+    private readonly globalConfig: Configuration,
+  ) {
+    // Configurar autenticación dinámica manteniendo basePath de la configuración global
+    globalConfig.credentials = {
+      bearerAuth: () => this.appStateService.getBearerToken() || '',
+    };
+
+    // Aplicar configuración global a todos los servicios
+    this.alertasService.configuration = globalConfig;
+    this.mensajesService.configuration = globalConfig;
+    this.multimediaService.configuration = globalConfig;
+    this.saludService.configuration = globalConfig;
+  }
 
   async sendAlert(): Promise<void> {
     this.appStateService.startLoading();
@@ -49,7 +67,7 @@ export class BotonService {
     }
     const datosUsuario = this.appStateService.getDatosUsuario();
 
-    const ubicacion: EnviarAlertaPostRequestLocalizacion = {
+    const ubicacion: Localizacion = {
       accuracy: localizacion.accuracy,
       longitude: localizacion.longitude,
       latitude: localizacion.latitude,
@@ -59,7 +77,7 @@ export class BotonService {
       speed: localizacion.speed ?? undefined,
     };
     const id_dispositivo = await this.appStateService.getIdDispositivo();
-    const datosAEnviar: EnviarAlertaPostRequest = {
+    const datosAEnviar: Solicitud = {
       idDispositivo: id_dispositivo,
       localizacion: ubicacion,
       correoElectronico: datosUsuario?.correoElectronico,
@@ -67,8 +85,8 @@ export class BotonService {
       numeroTelefono: datosUsuario?.numeroTelefono,
       nombreCompleto: datosUsuario?.nombreCompleto,
     };
-    const respuesta: EnviarAlertaPost200Response = await lastValueFrom(
-      this.appBotonServices.enviarAlertaPost(datosAEnviar),
+    const respuesta: Respuesta = await lastValueFrom(
+      this.alertasService.enviarAlerta(datosAEnviar),
     ).catch((error) => {
       if (error.status === 429) {
         this.appStateService.sendMessageModal({
@@ -104,13 +122,13 @@ export class BotonService {
     // Formatear como "hora:minuto"
     const horaMinuto = `${hora}:${minutos}`;
     this.appStateService.saveHoraAlerta(horaMinuto);
-    this.appStateService.startAlert(respuesta.uam ?? true);
-    if (respuesta.uam) this.router.navigate(['/selecciona']);
+    this.appStateService.startAlert(respuesta.enZonaPermitida ?? true);
+    if (respuesta.enZonaPermitida) this.router.navigate(['/selecciona']);
     this.appStateService.stopLoading();
   }
 
   async checarComunicacion(): Promise<boolean> {
-    return await lastValueFrom(this.appBotonServices.checarComunicacionGet())
+    return await lastValueFrom(this.saludService.verificarComunicacion())
       .then(() => {
         return true;
       })
@@ -123,19 +141,19 @@ export class BotonService {
     this.appStateService.startLoading();
     const bearerToken = this.appStateService.getBearerToken();
     if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
+      const mensaje: Mensaje = {
         contenido: `El usuario selecciona el tipo de alerta: ${tipo}`,
       };
-      lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      ).catch((error) => {
-        this.appStateService.sendMessageModal({
-          title: 'Error',
-          message:
-            'Error al seleccionar el tipo de alerta, vuelve a intentarlo. ' +
-            error,
-        });
-      });
+      lastValueFrom(this.mensajesService.enviarMensaje(mensaje)).catch(
+        (error) => {
+          this.appStateService.sendMessageModal({
+            title: 'Error',
+            message:
+              'Error al seleccionar el tipo de alerta, vuelve a intentarlo. ' +
+              error,
+          });
+        },
+      );
     }
     this.appStateService.guardarTipoAlerta(tipo);
     this.appStateService.stopLoading();
@@ -150,15 +168,15 @@ export class BotonService {
       throw new Error('No se ha generado el token');
     }
 
-    await lastValueFrom(
-      this.appBotonServices.enviarFotoPost(bearerToken, blobFoto),
-    ).catch((error) => {
-      this.appStateService.sendMessageModal({
-        title: 'Error',
-        message: 'Error al enviar la foto, vuelve a intentarlo. ' + error,
-      });
-      throw new Error(error);
-    });
+    await lastValueFrom(this.multimediaService.enviarFoto(blobFoto)).catch(
+      (error) => {
+        this.appStateService.sendMessageModal({
+          title: 'Error',
+          message: 'Error al enviar la foto, vuelve a intentarlo. ' + error,
+        });
+        throw new Error(error);
+      },
+    );
 
     const fotoBase64 = await this.blobToBase64(blobFoto);
     const enviado: Enviado = {
@@ -174,8 +192,8 @@ export class BotonService {
     if (!bearerToken) {
       return null;
     }
-    const status: EstadoAtendida201Response | null = await lastValueFrom(
-      this.appBotonServices.estadoAtendida(bearerToken),
+    const statusString: string | null = await lastValueFrom(
+      this.alertasService.obtenerEstadoAlerta(),
     ).catch((error) => {
       //si el error es 401 entonces terminar la alerta
       if (error.status === 401) {
@@ -197,30 +215,35 @@ export class BotonService {
 
     var statusAlerta: StatusAlerta;
 
-    if (!status) {
+    if (!statusString) {
       return null;
     }
-    console.log('Status: ', status.tipo);
-    switch (status.tipo) {
-      case EstadoAtendida201Response.TipoEnum.EnAtencion:
+    console.log('Status: ', statusString);
+
+    // Mapear string del API a enum StatusAlerta
+    switch (statusString.toUpperCase()) {
+      case 'EN_ATENCION':
+      case 'ENATENCION':
         statusAlerta = StatusAlerta.EN_ATENCION;
         break;
-      case EstadoAtendida201Response.TipoEnum.Finalizada:
+      case 'FINALIZADA':
         statusAlerta = StatusAlerta.FINALIZADA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Cancelada:
+      case 'CANCELADA':
         statusAlerta = StatusAlerta.CANCELADA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Rechazada:
+      case 'RECHAZADA':
         statusAlerta = StatusAlerta.RECHAZADA;
         break;
-      case EstadoAtendida201Response.TipoEnum.EsperandoRespuesta:
+      case 'ESPERANDO_RESPUESTA':
+      case 'ESPERANDORESPUESTA':
         statusAlerta = StatusAlerta.ESPERANDO_RESPUESTA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Enviada:
+      case 'ENVIADA':
+      case 'ACTIVA':
         statusAlerta = StatusAlerta.ENVIADA;
         break;
-      case EstadoAtendida201Response.TipoEnum.Atendida:
+      case 'ATENDIDA':
         statusAlerta = StatusAlerta.ATENDIDA;
         break;
       default:
@@ -237,20 +260,20 @@ export class BotonService {
 
     const bearerToken = this.appStateService.getBearerToken();
     if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
+      const mensaje: Mensaje = {
         contenido: `El usuario manda su ubicación:
         Lugar: ${selectedLugar}
         Especificación: ${ubicacionEspecificacion}`,
       };
-      await lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      ).catch((error) => {
-        this.appStateService.sendMessageModal({
-          title: 'Error',
-          message:
-            'Error al enviar la ubicación, vuelve a intentarlo. ' + error,
-        });
-      });
+      await lastValueFrom(this.mensajesService.enviarMensaje(mensaje)).catch(
+        (error) => {
+          this.appStateService.sendMessageModal({
+            title: 'Error',
+            message:
+              'Error al enviar la ubicación, vuelve a intentarlo. ' + error,
+          });
+        },
+      );
     } else {
       this.appStateService.sendMessageModal({
         title: 'Error',
@@ -280,19 +303,19 @@ export class BotonService {
     this.appStateService.saveEnviado(enviado);
     const bearerToken = this.appStateService.getBearerToken();
     if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
+      const mensaje: Mensaje = {
         contenido: `El usuario manda más información:
         ${textoMasInfo}`,
       };
-      await lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      ).catch((error) => {
-        this.appStateService.sendMessageModal({
-          title: 'Error',
-          message:
-            'Error al enviar la información, vuelve a intentarlo. ' + error,
-        });
-      });
+      await lastValueFrom(this.mensajesService.enviarMensaje(mensaje)).catch(
+        (error) => {
+          this.appStateService.sendMessageModal({
+            title: 'Error',
+            message:
+              'Error al enviar la información, vuelve a intentarlo. ' + error,
+          });
+        },
+      );
     }
     this.appStateService.stopLoading();
     this.router.navigate(['/send-more-info']);
@@ -301,7 +324,9 @@ export class BotonService {
     this.appStateService.startLoading();
     const bearerToken = this.appStateService.getBearerToken();
     if (bearerToken) {
-      this.appBotonServices.cancelar();
+      lastValueFrom(this.alertasService.cancelarAlerta()).catch((error) => {
+        console.error('Error al cancelar alerta:', error);
+      });
     }
     this.appStateService.stopAlert();
     this.appStateService.stopLoading();
@@ -312,16 +337,14 @@ export class BotonService {
     this.appStateService.saveDatosUsuario(datosUsuario);
     const bearerToken = this.appStateService.getBearerToken();
     if (this.appStateService.getIsActiveAlert() && bearerToken) {
-      const contenido: EnviarMensajePostRequest = {
+      const mensaje: Mensaje = {
         contenido: `El usuario manda sus datos:
             Nombre: ${datosUsuario.nombreCompleto}
             Matricula: ${datosUsuario.matricula}
         Telefono: ${datosUsuario.numeroTelefono}
         Correo: ${datosUsuario.correoElectronico}`,
       };
-      await lastValueFrom(
-        this.appBotonServices.enviarMensajePost(bearerToken, contenido),
-      );
+      await lastValueFrom(this.mensajesService.enviarMensaje(mensaje));
     }
   }
 

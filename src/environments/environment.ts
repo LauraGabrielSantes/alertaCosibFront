@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: '/boton',
+  apiUrl: 'https://boton.jquiroz.net:8043',
+  frontendUrl: 'https://localhost:4200',
 };
 
 /*

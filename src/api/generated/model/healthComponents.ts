@@ -12,12 +12,28 @@
 
 
 /**
- * Respuesta con mensaje de resultado de una operación
+ * Estado de componentes del sistema
  */
-export interface PostAlerta { 
+export interface HealthComponents { 
     /**
-     * Mensaje descriptivo del resultado de la operación
+     * Estado de la base de datos
      */
-    mensaje?: string;
+    database?: string;
+    /**
+     * Estado de la aplicación
+     */
+    application?: string;
+    /**
+     * Telegram configurado
+     */
+    telegram?: string;
+    /**
+     * Twilio configurado
+     */
+    twilio?: string;
+    /**
+     * Email configurado
+     */
+    email?: string;
 }
 

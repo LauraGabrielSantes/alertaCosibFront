@@ -1,357 +1,1109 @@
-openapi: 3.1.0
+openapi: 3.0.1
 info:
-  title: Botón API
-  description: "API para el envío de alertas, mensajes, fotos, audios, videos, reportes, comunicación WebSocket, y gestión de conversaciones a través de un servicio de Telegram."
-  version: 1.0.0-oas3.1
+  title: Botón De Pánico API
+  description: "API REST para el sistema de alertas de Botón de Pánico. Sistema de\
+    \ alertas en tiempo real con notificaciones por Telegram, SMS (Twilio) y Correo\
+    \ electrónico."
+  contact:
+    name: COSIB - Centro de Operaciones de Seguridad Integrada
+    url: https://www.cosib.org
+    email: soporte@cosib.org
+  license:
+    name: Licencia Privada
+    url: https://www.cosib.org/licencia
+  version: 1.0.0
 servers:
-  - url: /boton
-    description: API REST y WebSocket bajo el prefijo `/boton`
+- url: http://boton.jquiroz.net:8080
+  description: Servidor Producción
+- url: http://localhost:8080
+  description: Servidor Local
+- url: http://192.168.1.163:8080
+  description: Servidor Red Local
+security:
+- bearerAuth: []
+tags:
+- name: Salud
+  description: Health checks y estado básico del servicio
+- name: Mensajes
+  description: Mensajes de texto asociados al botón de pánico
+- name: Documentación
+  description: Descargas de especificación OpenAPI
+- name: Alertas
+  description: Operaciones de alertas para el botón de pánico
+- name: Conversaciones
+  description: Consulta de conversaciones relacionadas a alertas
+- name: Multimedia
+  description: Envío de archivos multimedia del botón de pánico
+- name: Reportes
+  description: Consulta de reportes del sistema
 paths:
-  /enviarAlerta:
+  /boton/multimedia/video:
     post:
-      summary: Enviar una alerta
-      description: "Envía una alerta con el `idDispositivo` y la `localizacion`, otros campos son opcionales."
+      tags:
+      - Multimedia
+      summary: Enviar video
+      description: "Envía un video por Telegram usando el token JWT. Formatos soportados:\
+        \ MP4, MOV, AVI, MKV, WebM."
+      operationId: enviarVideo
       requestBody:
-        description: Datos de la solicitud
-        required: true
+        description: Video en formato binario. Debe enviarse el contenido raw del
+          archivo.
         content:
-          application/json:
+          video/mp4:
             schema:
-              type: object
-              required:
-                - idDispositivo
-                - localizacion
-              properties:
-                idDispositivo:
-                  type: string
-                  description: El identificador único del dispositivo.
-                localizacion:
-                  type: object
-                  properties:
-                    latitude:
-                      type: number
-                    longitude:
-                      type: number
-                    altitude:
-                      type: number
-                      nullable: true
-                    accuracy:
-                      type: number
-                      nullable: true
-                    altitudeAccuracy:
-                      type: number
-                      nullable: true
-                    heading:
-                      type: number
-                      nullable: true
-                    speed:
-                      type: number
-                      nullable: true
-                nombreCompleto:
-                  type: string
-                  description: El nombre completo de la persona (opcional).
-                matricula:
-                  type: string
-                  description: La matrícula del usuario (opcional).
-                numeroTelefono:
-                  type: string
-                  description: Número de teléfono (opcional).
-                correoElectronico:
-                  type: string
-                  description: Correo electrónico del usuario (opcional).
+              type: string
+              format: binary
+        required: true
       responses:
         "200":
-          description: Respuesta exitosa con el token de autenticación.
+          description: Video enviado exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                  idMensaje:
-                    type: number
-                    x-stoplight:
-                      id: iei98juusoef0
-                  horaEnvio:
-                    type: string
-                    x-stoplight:
-                      id: oxgs9vywpogb8
-                  uam:
-                    type: boolean
-                    x-stoplight:
-                      id: sktjiecsy4v11
-        "401":
-          description: Token no válido.
+                $ref: '#/components/schemas/PostAlerta'
         "500":
-          description: Error interno del servidor.
-  /enviarMensaje:
-    post:
-      summary: Enviar un mensaje
-      description: Envía un mensaje de texto al servicio de Telegram.
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Mensaje a enviar
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                contenido:
-                  type: string
-      responses:
-        "200":
-          description: Mensaje enviado con éxito.
+          description: Error interno del servidor
           content:
-            application/json:
+            '*/*':
               schema:
-                type: object
-                properties:
-                  mensaje:
-                    type: string
+                $ref: '#/components/schemas/PostAlerta'
         "401":
-          description: Token no válido.
-        "500":
-          description: Error inesperado.
-  /enviarFoto:
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "400":
+          description: Archivo inválido o formato no soportado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+  /boton/multimedia/foto:
     post:
-      summary: Enviar una foto
-      description: Envía una foto a través del servicio de Telegram.
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
+      tags:
+      - Multimedia
+      summary: Enviar foto
+      description: "Envía una foto por Telegram usando el token JWT obtenido de una\
+        \ alerta. Formatos soportados: JPEG, PNG, GIF, HEIC, BMP, WebP."
+      operationId: enviarFoto
       requestBody:
-        description: Foto en formato de bytes
-        required: true
+        description: Imagen en formato binario. Debe enviarse el contenido raw del
+          archivo.
         content:
           image/jpeg:
             schema:
               type: string
               format: binary
-          image/png:
+        required: true
+      responses:
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "200":
+          description: Foto enviada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "400":
+          description: Archivo inválido o formato no soportado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+  /boton/multimedia/audio:
+    post:
+      tags:
+      - Multimedia
+      summary: Enviar audio
+      description: "Envía un audio por Telegram usando el token JWT. Formatos soportados:\
+        \ MP3, AAC, WAV, OGG, FLAC."
+      operationId: enviarAudio
+      requestBody:
+        description: Audio en formato binario. Debe enviarse el contenido raw del
+          archivo.
+        content:
+          audio/mpeg:
             schema:
               type: string
               format: binary
+        required: true
       responses:
         "200":
-          description: Foto enviada con éxito.
+          description: Audio enviado exitosamente
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  mensaje:
-                    type: string
-        "401":
-          description: Token no válido.
+                $ref: '#/components/schemas/PostAlerta'
         "500":
-          description: Error inesperado.
-  /checarComunicacion:
-    get:
-      summary: Verificar la comunicación
-      description: Endpoint para checar si hay comunicación con el servicio.
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "400":
+          description: Archivo inválido o formato no soportado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+  /boton/mensajes/enviar:
+    post:
+      tags:
+      - Mensajes
+      summary: Enviar mensaje
+      description: Envía un mensaje de texto a través de Telegram.
+      operationId: enviarMensaje
+      requestBody:
+        description: Mensaje de texto a enviar
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Mensaje'
+            examples:
+              Mensaje de emergencia:
+                summary: Ejemplo de mensaje típico
+                description: Mensaje de emergencia
+                value:
+                  contenido: "Necesito ayuda inmediata, estoy en peligro"
+        required: true
+      responses:
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Error al enviar el mensaje
+          content:
+            '*/*':
+              schema:
+                type: object
+        "200":
+          description: Mensaje enviado exitosamente
+          content:
+            '*/*':
+              schema:
+                type: object
+  /boton/alertas/enviar:
+    post:
+      tags:
+      - Alertas
+      summary: Enviar alerta
+      description: "Crea una alerta y notifica por Telegram, SMS (Twilio) y/o Correo\
+        \ electrónico según la configuración disponible."
+      operationId: enviarAlerta
+      requestBody:
+        description: Datos de la alerta con información del usuario y su ubicación
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Solicitud'
+        required: true
       responses:
         "200":
-          description: Comunicación exitosa.
+          description: Alerta creada y enviada a todos los servicios configurados
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  contenido:
-                    type: string
-  /reportes/listar:
+                $ref: '#/components/schemas/Respuesta'
+        "400":
+          description: Solicitud inválida - Validación de campos fallida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "500":
+          description: Error interno del servidor - No hay servicios de mensajería
+            configurados
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Respuesta'
+        "429":
+          description: Límite de reintentos de token alcanzado - Espere antes de enviar
+            otra alerta
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Respuesta'
+  /boton/alertas/cancelar:
+    post:
+      tags:
+      - Alertas
+      summary: Cancelar alerta
+      description: Cancela una alerta activa asociada al dispositivo del token JWT.
+      operationId: cancelarAlerta
+      responses:
+        "404":
+          description: No existe alerta activa para cancelar
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+        "200":
+          description: Alerta cancelada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAlerta'
+  /boton/reportes:
     get:
-      summary: Listar todos los reportes
-      description: Devuelve una lista de todos los reportes.
+      tags:
+      - Reportes
+      summary: Listar reportes
+      description: Devuelve todos los reportes registrados en el sistema.
+      operationId: listarTodos
       responses:
         "200":
-          description: Lista de reportes devuelta exitosamente.
+          description: Lista de reportes obtenida exitosamente
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    id:
-                      type: string
-                    descripcion:
-                      type: string
-  /reportes/obtener/{id}:
+                  $ref: '#/components/schemas/Reporte'
+        "204":
+          description: Sin reportes en el sistema
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reporte'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reporte'
+  /boton/reportes/{id}:
     get:
-      summary: Obtener un reporte por ID
-      description: Devuelve un reporte específico basado en su ID.
+      tags:
+      - Reportes
+      summary: Obtener reporte por ID
+      description: Devuelve un reporte específico identificado por su ID único.
+      operationId: obtenerPorId
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
+      - name: id
+        in: path
+        description: ID único del reporte
+        required: true
+        schema:
+          type: string
+        example: 507f1f77bcf86cd799439011
       responses:
         "200":
-          description: Reporte devuelto exitosamente.
+          description: Reporte encontrado
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                  descripcion:
-                    type: string
+                $ref: '#/components/schemas/Reporte'
+        "400":
+          description: ID inválido o mal formado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Reporte'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Reporte'
         "404":
-          description: Reporte no encontrado.
-  /estadoAlerta:
+          description: Reporte no encontrado con el ID proporcionado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Reporte'
+  /boton/ping:
     get:
-      summary: Estado de la Alerta
+      tags:
+      - Salud
+      summary: Ping
+      description: Endpoint simple para verificar conectividad.
+      operationId: ping
       responses:
-        "201":
-          description: Created
+        "200":
+          description: Pong
+          content:
+            '*/*':
+              schema:
+                type: string
+  /boton/mensajes/por-dispositivo:
+    get:
+      tags:
+      - Mensajes
+      summary: Obtener mensajes por dispositivo (token)
+      description: Devuelve los mensajes asociados al dispositivo del usuario actual.
+        REQUIERE token JWT. El ID del dispositivo se extrae del token automáticamente.
+      operationId: obtenerMensajes
+      responses:
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "200":
+          description: Mensajes obtenidos exitosamente
           content:
             application/json:
               schema:
+                type: array
+                items:
+                  type: string
+                  example: Necesito ayuda inmediata
+        "400":
+          description: Token no proporcionado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "204":
+          description: Sin mensajes para este dispositivo
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+  /boton/mensajes/mi-dispositivo/mis-mensajes:
+    get:
+      tags:
+      - Mensajes
+      summary: Obtener mis mensajes (por token)
+      description: Devuelve los mensajes asociados al dispositivo del usuario actual
+        extraído del token JWT.
+      operationId: obtenerMisMensajesPorToken
+      responses:
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "200":
+          description: Mensajes obtenidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Necesito ayuda inmediata
+        "204":
+          description: Sin mensajes para este dispositivo
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+  /boton/health:
+    get:
+      tags:
+      - Salud
+      summary: Health check
+      description: Verifica que el servidor esté disponible y respondiendo.
+      operationId: verificarComunicacion
+      responses:
+        "200":
+          description: Servicio activo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Mensaje'
+  /boton/health/detailed:
+    get:
+      tags:
+      - Salud
+      summary: Health detallado
+      description: "Devuelve información completa de salud del sistema incluyendo\
+        \ métricas de memoria, procesadores y estado de componentes."
+      operationId: healthDetailed
+      responses:
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HealthDetailedResponse'
+        "200":
+          description: Detalle de salud completado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthDetailedResponse'
+  /boton/docs/openapi.yml:
+    get:
+      tags:
+      - Documentación
+      summary: Descargar especificación OpenAPI YML
+      description: Descarga la especificación completa de la API en formato YML
+      operationId: downloadOpenApiYml
+      responses:
+        "500":
+          description: Error al generar la especificación
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Especificación YML descargada exitosamente
+          content:
+            '*/*':
+              schema:
+                type: string
+  /boton/docs/openapi.yaml:
+    get:
+      tags:
+      - Documentación
+      summary: Descargar especificación OpenAPI YAML
+      description: Descarga la especificación completa de la API en formato YAML
+      operationId: downloadOpenApiYaml
+      responses:
+        "200":
+          description: Especificación YAML descargada exitosamente
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Error al generar la especificación
+          content:
+            '*/*':
+              schema:
+                type: string
+  /boton/docs/openapi.json:
+    get:
+      tags:
+      - Documentación
+      summary: Descargar especificación OpenAPI JSON
+      description: Descarga la especificación completa de la API en formato JSON
+      operationId: downloadOpenApiJson
+      responses:
+        "500":
+          description: Error al generar la especificación
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Especificación JSON descargada exitosamente
+          content:
+            '*/*':
+              schema:
+                type: string
+  /boton/conversaciones/todas:
+    get:
+      tags:
+      - Conversaciones
+      summary: Listar todas las conversaciones
+      description: Devuelve todas las conversaciones registradas en el sistema o solo
+        las del usuario actual si proporciona token JWT.
+      operationId: obtenerTodasLasConversaciones
+      responses:
+        "200":
+          description: Lista de conversaciones obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "204":
+          description: Sin conversaciones en el sistema
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+  /boton/conversaciones/por-dispositivo:
+    get:
+      tags:
+      - Conversaciones
+      summary: Listar conversaciones por dispositivo (token)
+      description: Devuelve conversaciones asociadas al dispositivo del usuario actual.
+        REQUIERE token JWT en el header Authorization. El ID del dispositivo se extrae
+        del token automáticamente.
+      operationId: obtenerConversaciones
+      responses:
+        "204":
+          description: Sin conversaciones para este dispositivo
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "400":
+          description: Token no proporcionado o inválido
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+        "200":
+          description: Lista de conversaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversacion'
+  /boton/conversaciones/mi-dispositivo/mensajes:
+    get:
+      tags:
+      - Conversaciones
+      summary: Obtener mis mensajes
+      description: Devuelve los mensajes asociados al dispositivo del usuario actual
+        (extraído del token JWT).
+      operationId: obtenerMisMensajes
+      responses:
+        "200":
+          description: Mensajes obtenidos exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: Necesito ayuda
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+        "204":
+          description: Sin mensajes para este dispositivo
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+  /boton/conversaciones/mi-dispositivo/conversaciones:
+    get:
+      tags:
+      - Conversaciones
+      summary: Obtener mis conversaciones
+      description: Devuelve las conversaciones asociadas al dispositivo del usuario
+        actual (extraído del token JWT).
+      operationId: obtenerMinasConversaciones
+      responses:
+        "200":
+          description: Conversaciones obtenidas exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "204":
+          description: Sin conversaciones para este dispositivo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+  /boton/conversaciones/mi-dispositivo/completa:
+    get:
+      tags:
+      - Conversaciones
+      summary: Obtener mi conversación completa
+      description: Devuelve la conversación completa con todos los detalles y mensajes
+        del dispositivo del usuario actual extraído del token JWT.
+      operationId: obtenerMiConversacionCompleta
+      responses:
+        "204":
+          description: Sin conversaciones para este dispositivo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+        "200":
+          description: Conversación obtenida exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversaciones'
+  /boton/alertas/estado:
+    get:
+      tags:
+      - Alertas
+      summary: Obtener estado de alerta
+      description: "Devuelve el estado actual de la alerta (ACTIVA, ESPERANDO_RESPUESTA,\
+        \ CANCELADA, EXPIRADA) asociada al dispositivo del token JWT."
+      operationId: obtenerEstadoAlerta
+      responses:
+        "200":
+          description: Estado obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                type: string
+                example:
+                  tipo: ACTIVA
+        "500":
+          description: Error interno del servidor
+          content:
+            '*/*':
+              schema:
                 type: object
-                properties:
-                  tipo:
-                    type: string
-                    enum:
-                      - NO_DEFINIDO
-                      - ENVIADA
-                      - ESPERANDO_RESPUESTA
-                      - RECHAZADA
-                      - EN_ATENCION
-                      - FINALIZADA
-                      - CANCELADA
-                      - ATENDIDA
-              examples:
-                Example 1:
-                  value:
-                    tipo: Atendida
-      operationId: EstadoAtendida
-      parameters:
-        - in: header
-          name: Authorization
-          required: true
-          schema:
-            type: string
-  /cancelarAlerta:
-    post:
-      summary: Your POST endpoint
-      responses: {}
-      operationId: cancelar
-x-websocket:
-  /boton/ws:
-    description: WebSocket para enviar mensajes a "/topic/telegram" desde el prefijo `/boton`
-    subscribe:
-      summary: Conectarse al WebSocket para recibir mensajes de Telegram
-      description: Envía mensajes al WebSocket y los suscriptores recibirán mensajes a través del destino `/topic/telegram`.
-      message:
-        $ref: "#/components/schemas/Messages"
-    publish:
-      summary: Publicar mensajes en WebSocket
-      description: Publica mensajes que serán enviados a los suscriptores en el destino `/topic/telegram`.
-      message:
-        $ref: "#/components/schemas/Information"
+                additionalProperties:
+                  type: string
+        "401":
+          description: Token inválido o expirado
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
 components:
   schemas:
-    SolicitudAlerta:
-      type: object
-      required:
-        - idDispositivo
-        - localizacion
-      properties:
-        idDispositivo:
-          type: string
-          description: El identificador único del dispositivo.
-        localizacion:
-          type: object
-          properties:
-            latitude:
-              type: number
-            longitude:
-              type: number
-            altitude:
-              type: number
-              nullable: true
-            accuracy:
-              type: number
-              nullable: true
-            altitudeAccuracy:
-              type: number
-              nullable: true
-            heading:
-              type: number
-              nullable: true
-            speed:
-              type: number
-              nullable: true
-        nombreCompleto:
-          type: string
-          description: El nombre completo de la persona (opcional).
-        matricula:
-          type: string
-          description: La matrícula del usuario (opcional).
-        numeroTelefono:
-          type: string
-          description: Número de teléfono (opcional).
-        correoElectronico:
-          type: string
-          description: Correo electrónico del usuario (opcional).
-    Respuesta:
-      type: object
-      properties:
-        token:
-          type: string
-        contenido:
-          type: string
-    Solicitud:
-      type: object
-      properties:
-        contenido:
-          type: string
-    Mensaje:
-      type: object
-      properties:
-        contenido:
-          type: string
     PostAlerta:
       type: object
       properties:
         mensaje:
           type: string
+          description: Mensaje descriptivo del resultado de la operación
+          example: Alerta cancelada correctamente
+      description: Respuesta con mensaje de resultado de una operación
+    Mensaje:
+      type: object
+      properties:
+        idMensaje:
+          type: string
+          description: ID único del mensaje
+          example: msg-78910xyz
+        contenido:
+          type: string
+          description: Contenido del mensaje de texto
+          example: Necesito ayuda inmediata
+      description: Mensaje de texto asociado a una alerta
+    Localizacion:
+      type: object
+      properties:
+        accuracy:
+          type: number
+          description: Precisión de la localización en metros
+          format: double
+          example: 10.5
+        altitude:
+          type: number
+          description: Altitud en metros sobre el nivel del mar
+          format: double
+          example: 1500.35
+        altitudeAccuracy:
+          type: number
+          description: Precisión de la altitud en metros
+          format: double
+          example: 5.0
+        heading:
+          type: number
+          description: Dirección en grados (0-360)
+          format: double
+          example: 45.0
+        latitude:
+          type: number
+          description: Latitud de la ubicación
+          format: double
+          example: 20.6597
+        longitude:
+          type: number
+          description: Longitud de la ubicación
+          format: double
+          example: -103.3496
+        speed:
+          type: number
+          description: Velocidad en m/s
+          format: double
+          example: 5.2
+      description: Coordenadas GPS y precisión de la localización del usuario
+      example:
+        latitude: 20.6597
+        longitude: -103.3496
+        accuracy: 10.5
+        altitude: 1500.35
+        heading: 45.0
+        speed: 5.2
+    Solicitud:
+      type: object
+      properties:
+        localizacion:
+          $ref: '#/components/schemas/Localizacion'
+        idDispositivo:
+          type: string
+          description: ID único del dispositivo
+          example: device-123abc
+        nombreCompleto:
+          type: string
+          description: Nombre completo del usuario
+          example: Juan López García
+        matricula:
+          type: string
+          description: Matrícula o ID del usuario en la institución
+          example: A12345
+        numeroTelefono:
+          type: string
+          description: Número telefónico del usuario
+          example: "+525542995420"
+        correoElectronico:
+          type: string
+          description: Correo electrónico del usuario
+          example: juan.lopez@example.com
+      description: Solicitud de alerta con datos del usuario y localización
+      example:
+        idDispositivo: device-123abc
+        nombreCompleto: Juan López García
+        matricula: A12345
+        numeroTelefono: "+525542995420"
+        correoElectronico: juan.lopez@example.com
+        localizacion:
+          latitude: 20.6597
+          longitude: -103.3496
+          accuracy: 10.5
+    Respuesta:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Token JWT para autenticación en siguientes peticiones
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        idMensaje:
+          type: string
+          description: ID único del mensaje/alerta generado
+          example: msg-78910xyz
+        horaEnvio:
+          type: string
+          description: Timestamp de envío de la alerta en ISO 8601
+          example: 2026-02-19T21:54:30.000Z
+        enZonaPermitida:
+          type: boolean
+          description: Indica si la localización está dentro de la zona permitida
+            (UACM)
+          example: true
+        esPosibleObtenerToken:
+          type: boolean
+          description: Indica si es posible generar un nuevo token
+          example: true
+        tiempoEnMinutosRegenerarToken:
+          type: integer
+          description: Minutos que deben pasar antes de poder generar un nuevo token
+          format: int32
+          example: 5
+      description: Respuesta después de enviar una alerta exitosamente
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        idMensaje: msg-78910xyz
+        horaEnvio: 2026-02-19T21:54:30.000Z
+        enZonaPermitida: true
+        esPosibleObtenerToken: true
+        tiempoEnMinutosRegenerarToken: 5
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: Código de estado HTTP
+          format: int32
+          example: 400
+        mensaje:
+          type: string
+          description: Mensaje de error general
+          example: Solicitud inválida
+        detalles:
+          type: string
+          description: Detalles específicos del error
+          example: El campo 'nombreCompleto' es requerido
+        timestamp:
+          type: string
+          description: Timestamp de cuando ocurrió el error
+          format: date-time
+        path:
+          type: string
+          description: Ruta del endpoint que generó el error
+          example: /boton/alertas/enviar
+      description: Respuesta estándar de error de la API
+      example:
+        status: 400
+        mensaje: Solicitud inválida
+        detalles: El campo 'nombreCompleto' es requerido
+        timestamp: 2024-02-19T21:54:00
+        path: /boton/alertas/enviar
     Reporte:
       type: object
       properties:
         id:
           type: string
-        descripcion:
+          description: ID único del reporte en MongoDB
+          example: 507f1f77bcf86cd799439011
+        fecha:
           type: string
-    Messages:
+          description: Fecha del reporte en formato texto
+          example: 2026-02-19
+        hora:
+          type: string
+          description: Hora del reporte
+          example: 21:54:30
+        tipoMultimedia:
+          type: string
+          description: "Tipo de multimedia adjunta (foto, audio, video)"
+          example: foto
+        contenidoMultimedia:
+          type: array
+          description: Contenido multimedia en bytes (Base64 en JSON)
+          items:
+            type: string
+            description: Contenido multimedia en bytes (Base64 en JSON)
+            format: byte
+      description: Reporte multimedia generado por una alerta
+    HealthComponents:
       type: object
       properties:
-        body:
+        database:
           type: string
-    Information:
+          description: Estado de la base de datos
+          example: UP
+        application:
+          type: string
+          description: Estado de la aplicación
+          example: UP
+        telegram:
+          type: string
+          description: Telegram configurado
+          example: CONFIGURED
+        twilio:
+          type: string
+          description: Twilio configurado
+          example: CONFIGURED
+        email:
+          type: string
+          description: Email configurado
+          example: CONFIGURED
+      description: Estado de componentes del sistema
+      example:
+        database: UP
+        application: UP
+        telegram: CONFIGURED
+        twilio: CONFIGURED
+        email: CONFIGURED
+    HealthDetailedResponse:
       type: object
       properties:
-        body:
+        components:
+          $ref: '#/components/schemas/HealthComponents'
+        availableProcessors:
+          type: integer
+          description: Número de procesadores disponibles
+          format: int32
+          example: 16
+        totalMemory:
+          type: integer
+          description: Memoria total del proceso en bytes
+          format: int64
+          example: 469762048
+        maxMemory:
+          type: integer
+          description: Memoria máxima disponible en bytes
+          format: int64
+          example: 12574523392
+        freeMemory:
+          type: integer
+          description: Memoria libre en bytes
+          format: int64
+          example: 185095536
+        status:
           type: string
+          description: Estado general del sistema
+          example: UP
+        timestamp:
+          type: integer
+          description: Timestamp actual en milisegundos
+          format: int64
+          example: 1771560399489
+        uptime:
+          type: integer
+          description: Tiempo de actividad en milisegundos
+          format: int64
+          example: 284666512
+      description: Información detallada de salud del sistema con métricas de memoria
+        y componentes
+      example:
+        components:
+          database: UP
+          application: UP
+          telegram: CONFIGURED
+          twilio: CONFIGURED
+          email: CONFIGURED
+        availableProcessors: 16
+        totalMemory: 469762048
+        maxMemory: 12574523392
+        freeMemory: 185095536
+        status: UP
+        timestamp: 1771560399489
+        uptime: 284666512
     Conversacion:
       type: object
       properties:
+        mensajeOriginal:
+          type: string
+          description: Mensaje original enviado por el bot
+          example: "🚨 ALERTA DE PÁNICO recibida"
+        contestacion:
+          type: string
+          description: Respuesta recibida por el bot
+          example: En camino al punto de emergencia
         idDispositivo:
           type: string
+          description: ID del dispositivo que participó en la conversación
+          example: device-123abc
+        fecha:
+          type: string
+          description: Fecha y hora de la conversación
+          format: date-time
+      description: Conversación registrada entre el bot de Telegram y un dispositivo
+    Conversaciones:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único del documento en MongoDB
+          example: 507f1f77bcf86cd799439011
+        idDispositivo:
+          type: string
+          description: ID del dispositivo asociado
+          example: device-123abc
         mensajes:
           type: array
+          description: Lista de mensajes del dispositivo
           items:
             type: string
+            description: Lista de mensajes del dispositivo
+      description: Colección de mensajes asociados a un dispositivo
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Token JWT obtenido del endpoint /boton/alertas/enviar
+      scheme: bearer
+      bearerFormat: JWT

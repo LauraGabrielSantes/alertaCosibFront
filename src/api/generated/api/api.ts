@@ -1,3 +1,15 @@
-export * from './default.service';
-import { DefaultService } from './default.service';
-export const APIS = [DefaultService];
+export * from './alertas.service';
+import { AlertasService } from './alertas.service';
+export * from './conversaciones.service';
+import { ConversacionesService } from './conversaciones.service';
+export * from './documentacin.service';
+import { DocumentacinService } from './documentacin.service';
+export * from './mensajes.service';
+import { MensajesService } from './mensajes.service';
+export * from './multimedia.service';
+import { MultimediaService } from './multimedia.service';
+export * from './reportes.service';
+import { ReportesService } from './reportes.service';
+export * from './salud.service';
+import { SaludService } from './salud.service';
+export const APIS = [AlertasService, ConversacionesService, DocumentacinService, MensajesService, MultimediaService, ReportesService, SaludService];

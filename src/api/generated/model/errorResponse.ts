@@ -12,12 +12,28 @@
 
 
 /**
- * Respuesta con mensaje de resultado de una operación
+ * Respuesta estándar de error de la API
  */
-export interface PostAlerta { 
+export interface ErrorResponse { 
     /**
-     * Mensaje descriptivo del resultado de la operación
+     * Código de estado HTTP
+     */
+    status?: number;
+    /**
+     * Mensaje de error general
      */
     mensaje?: string;
+    /**
+     * Detalles específicos del error
+     */
+    detalles?: string;
+    /**
+     * Timestamp de cuando ocurrió el error
+     */
+    timestamp?: string;
+    /**
+     * Ruta del endpoint que generó el error
+     */
+    path?: string;
 }
 
