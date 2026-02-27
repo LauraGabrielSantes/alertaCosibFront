@@ -5,7 +5,8 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "generate-ssl": "bash scripts/generate-ssl.sh",
+    "start": "npm run generate-ssl && ng serve --host 0.0.0.0 --ssl true --ssl-cert ssl/cert.pem --ssl-key ssl/key.pem",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
